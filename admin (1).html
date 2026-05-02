@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dorm-Grindz | Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0f0e0c;
+      --card: #1a1814;
+      --accent: #e8a945;
+      --accent2: #d4603a;
+      --text: #f0ece4;
+      --muted: #8a8070;
+      --border: #2e2b25;
+      --input-bg: #111009;
+      --success: #4caf7d;
+      --danger: #e07070;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── PASSWORD LOCK ── */
+    #lock-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .lock-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .lock-icon { font-size: 48px; margin-bottom: 16px; }
+
+    .lock-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .lock-box p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+    .lock-input-wrap { position: relative; margin-bottom: 12px; }
+
+    .lock-input-wrap input {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 13px 48px 13px 16px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      letter-spacing: 2px;
+    }
+
+    .lock-input-wrap input:focus { border-color: var(--accent); }
+    .lock-input-wrap input.error { border-color: var(--danger); animation: shake 0.3s ease; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+    }
+
+    .lock-error {
+      color: var(--danger);
+      font-size: 12px;
+      margin-bottom: 12px;
+      min-height: 16px;
+    }
+
+    .lock-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.2s;
+    }
+
+    .lock-btn:hover { opacity: 0.88; }
+
+    /* ── MAIN LAYOUT ── */
+    #main-content { display: none; padding-bottom: 80px; }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .logo { font-family: 'Playfair Display', serif; font-size: 22px; }
+    .logo span { color: var(--accent); }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .admin-badge {
+      background: var(--accent2);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .back-link, .logout-btn {
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover, .logout-btn:hover { color: var(--accent); }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 20px 40px 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      margin-bottom: -1px;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 780px; margin: 36px auto; padding: 0 24px; }
+
+    .page-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 4px; }
+    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+    /* ── FORM CARDS ── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-group.no-margin { margin-bottom: 0; }
+
+    label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    input, textarea, select {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      width: 100%;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    input::placeholder, textarea::placeholder { color: #3a342a; }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+    .emoji-input { font-size: 22px; text-align: center; }
+
+    /* Dynamic list */
+    .dynamic-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .list-row { display: flex; gap: 8px; align-items: center; }
+    .list-row input { flex: 1; }
+
+    .remove-row-btn {
+      background: #2a1a1a;
+      border: 1px solid #3a2020;
+      color: var(--danger);
+      border-radius: 8px;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      padding: 0;
+    }
+
+    .remove-row-btn:hover { background: #3a1a1a; }
+
+    .add-item-btn {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .add-item-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Tags */
+    .tags-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag-option { display: none; }
+
+    .tag-label {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .tag-option:checked + .tag-label {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Photo upload */
+    .photo-drop {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      background: var(--input-bg);
+    }
+
+    .photo-drop:hover { border-color: var(--accent); background: #1a1508; }
+
+    .photo-drop input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      border: none;
+      padding: 0;
+    }
+
+    .photo-drop-icon { font-size: 32px; margin-bottom: 8px; }
+    .photo-drop p { color: var(--muted); font-size: 13px; }
+    .photo-drop span { color: var(--accent); font-weight: 600; }
+
+    .photo-preview { display: none; margin-top: 14px; position: relative; }
+
+    .photo-preview img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .photo-remove-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      background: rgba(0,0,0,0.75);
+      border: 1px solid var(--border);
+      color: var(--danger);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .photo-name {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--input-bg);
+      border-radius: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+    }
+
+    /* Buttons */
+    .generate-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 6px;
+    }
+
+    .generate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Output */
+    .output-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      display: none;
+      margin-top: 20px;
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .output-header {
+      background: #141210;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .output-header h3 { font-size: 14px; color: var(--success); }
+
+    .copy-btn {
+      background: var(--success);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+    }
+
+    .output-code {
+      padding: 20px 22px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #c8bfaf;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .instructions {
+      background: #141f14;
+      border: 1px solid #2a3a2a;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-top: 18px;
+      display: none;
+    }
+
+    .instructions h4 { color: var(--success); font-size: 12px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .instructions ol { padding-left: 16px; display: flex; flex-direction: column; gap: 7px; }
+    .instructions li { font-size: 13px; color: #9aaa9a; line-height: 1.5; }
+    .instructions code { background: #0f180f; border: 1px solid #2a3a2a; border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--success); }
+
+    /* ── REMOVE RECIPES TAB ── */
+    .recipe-remove-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .recipe-remove-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .recipe-remove-emoji { font-size: 32px; flex-shrink: 0; }
+
+    .recipe-remove-info { flex: 1; }
+    .recipe-remove-info h3 { font-size: 16px; font-family: 'Playfair Display', serif; margin-bottom: 2px; }
+    .recipe-remove-info p { font-size: 12px; color: var(--muted); }
+
+    .delete-btn {
+      background: #2a1414;
+      border: 1px solid #4a2020;
+      color: var(--danger);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .delete-btn:hover { background: #3a1414; border-color: var(--danger); }
+
+    .deleted { opacity: 0.3; pointer-events: none; text-decoration: line-through; }
+
+    .remove-note {
+      background: #1a1510;
+      border: 1px solid #3a2a14;
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* ── CUSTOMIZE TAB ── */
+    .customize-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .color-row { display: flex; align-items: center; gap: 12px; }
+    .color-row input[type="color"] {
+      width: 44px;
+      height: 44px;
+      padding: 2px;
+      border-radius: 10px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .color-row span { font-size: 13px; color: var(--muted); }
+
+    .customize-preview {
+      background: #141210;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .customize-preview h3 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 6px; }
+    .customize-preview p { font-size: 13px; color: var(--muted); }
+
+    .apply-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      margin-top: 16px;
+      transition: opacity 0.2s;
+    }
+
+    .apply-btn:hover { opacity: 0.88; }
+
+    .customize-output {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      z-index: 999;
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+
+    @media (max-width: 600px) {
+      .form-row, .form-row.thirds, .customize-grid { grid-template-columns: 1fr; }
+      header { padding: 14px 16px; }
+      .tabs { padding: 16px 16px 0; }
+      .form-card { padding: 18px; }
+      .container { padding: 0 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── PASSWORD LOCK ── -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>Admin Access</h2>
+    <p>Enter your password to manage Dorm-Grindz</p>
+    <div class="lock-input-wrap">
+      <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()"/>
+      <button class="toggle-pw" onclick="togglePw()" id="toggle-pw-btn">👁</button>
+    </div>
+    <div class="lock-error" id="lock-error"></div>
+    <button class="lock-btn" onclick="checkPassword()">Unlock →</button>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="main-content">
+
+  <header>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="logo">Dorm<span>-Grindz</span></div>
+      <span class="admin-badge">Admin</span>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="back-link">← View Site</a>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('add', this)">➕ Add Recipe</button>
+    <button class="tab-btn" onclick="switchTab('remove', this)">🗑 Remove Recipe</button>
+    <button class="tab-btn" onclick="switchTab('customize', this)">🎨 Customize Site</button>
+  </div>
+
+  <!-- ════ TAB: ADD RECIPE ════ -->
+  <div class="tab-panel active" id="tab-add">
+    <div class="container">
+      <div class="page-title">Add a Recipe 🍴</div>
+      <p class="page-sub">Fill out the form — it generates ready-to-paste code for your site.</p>
+
+      <div class="form-card">
+        <div class="section-label">Basic Info</div>
+        <div class="form-row">
+          <div class="form-group no-margin">
+            <label>Emoji</label>
+            <input type="text" id="emoji" class="emoji-input" placeholder="🍕" maxlength="4"/>
+          </div>
+          <div class="form-group no-margin">
+            <label>Recipe Title</label>
+            <input type="text" id="title" placeholder="e.g. Dorm Room Pizza"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Short Description</label>
+          <input type="text" id="desc" placeholder="One line that sells the recipe..."/>
+        </div>
+        <div class="form-row thirds">
+          <div class="form-group no-margin">
+            <label>Cook Time</label>
+            <input type="text" id="time" placeholder="e.g. 10 min"/>
+          </div>
+          <div class="form-group no-margin">
+            <label>Estimated Cost</label>
+            <input type="text" id="cost" placeholder="e.g. $2.00"/>
+          </div>
+          <div class="form-group no-margin">
+            <label>Difficulty</label>
+            <select id="diff">
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="section-label">Tags</div>
+        <div class="tags-group">
+          <input type="checkbox" class="tag-option" id="tag-quick" value="quick"/>
+          <label class="tag-label" for="tag-quick">⚡ Under 10 min</label>
+          <input type="checkbox" class="tag-option" id="tag-cheap" value="cheap"/>
+          <label class="tag-label" for="tag-cheap">💰 Under $3</label>
+          <input type="checkbox" class="tag-option" id="tag-microwave" value="microwave"/>
+          <label class="tag-label" for="tag-microwave">📡 Microwave Only</label>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="section-label">Photo</div>
+        <div class="photo-drop" id="photo-drop">
+          <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
+          <div class="photo-drop-icon">📸</div>
+          <p>Drag & drop a photo, or <span>click to browse</span></p>
+          <p style="font-size:11px;margin-top:4px;color:#4a4035;">JPG, PNG, WEBP supported</p>
+        </div>
+        <div class="photo-preview" id="photo-preview">
+          <img id="photo-img" src="" alt="Preview"/>
+          <button class="photo-remove-btn" onclick="removePhoto()">✕ Remove</button>
+        </div>
+        <div class="photo-name" id="photo-name" style="display:none;"></div>
+      </div>
+
+      <div class="form-card">
+        <div class="section-label">Ingredients</div>
+        <div class="dynamic-list" id="ingredients-list">
+          <div class="list-row">
+            <input type="text" placeholder="e.g. 2 large eggs"/>
+            <button class="remove-row-btn" onclick="removeRow(this)">×</button>
+          </div>
+        </div>
+        <button class="add-item-btn" onclick="addIngredient()">+ Add Ingredient</button>
+      </div>
+
+      <div class="form-card">
+        <div class="section-label">Steps</div>
+        <div class="dynamic-list" id="steps-list">
+          <div class="list-row">
+            <input type="text" placeholder="e.g. Boil water over medium-high heat..."/>
+            <button class="remove-row-btn" onclick="removeRow(this)">×</button>
+          </div>
+        </div>
+        <button class="add-item-btn" onclick="addStep()">+ Add Step</button>
+      </div>
+
+      <div class="form-card">
+        <div class="section-label">Pro Tip</div>
+        <div class="form-group no-margin">
+          <label>Insider Tip</label>
+          <textarea id="tip" placeholder="Any helpful tip, substitution, or hack..."></textarea>
+        </div>
+      </div>
+
+      <button class="generate-btn" onclick="generate()">✨ Generate Recipe Code</button>
+
+      <div class="output-card" id="output-card">
+        <div class="output-header">
+          <h3>✅ Recipe Code Ready!</h3>
+          <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+        </div>
+        <div class="output-code" id="output-code"></div>
+      </div>
+
+      <div class="instructions" id="instructions">
+        <h4>📋 How to Add This to Your Site</h4>
+        <ol>
+          <li>Click <strong>"Copy Code"</strong> above.</li>
+          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong> to edit.</li>
+          <li>Find the line: <code>const recipes = [</code></li>
+          <li>Paste your copied code right after the opening <code>[</code> bracket.</li>
+          <li>If you added a photo, also upload that image file to your GitHub repo in an <code>images/</code> folder and update the <code>photo:</code> field to match, e.g. <code>"images/pizza.jpg"</code>.</li>
+          <li>Click <strong>"Commit changes"</strong> — your recipe is live in ~60 seconds! 🎉</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ TAB: REMOVE RECIPE ════ -->
+  <div class="tab-panel" id="tab-remove">
+    <div class="container">
+      <div class="page-title">Remove a Recipe 🗑</div>
+      <p class="page-sub">Click "Remove" next to any recipe to generate the updated code without it.</p>
+
+      <div class="remove-note">
+        ⚠️ This tool shows you which recipes to delete from your <code>index.html</code> file. It generates the updated recipe list for you to copy and paste — your live site won't change until you commit it on GitHub.
+      </div>
+
+      <div class="recipe-remove-list" id="recipe-remove-list"></div>
+
+      <div class="output-card" id="remove-output-card" style="margin-top:20px;">
+        <div class="output-header">
+          <h3>✅ Updated Recipe List Ready!</h3>
+          <button class="copy-btn" onclick="copyRemoveCode()">Copy Code</button>
+        </div>
+        <div class="output-code" id="remove-output-code"></div>
+      </div>
+
+      <div class="instructions" id="remove-instructions" style="display:none;margin-top:16px;">
+        <h4>📋 How to Apply This</h4>
+        <ol>
+          <li>Click <strong>"Copy Code"</strong> above.</li>
+          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong>.</li>
+          <li>Find <code>const recipes = [</code> and select everything from that line all the way to the closing <code>];</code>.</li>
+          <li>Replace it with your copied code.</li>
+          <li>Click <strong>"Commit changes"</strong> — done! 🎉</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ TAB: CUSTOMIZE ════ -->
+  <div class="tab-panel" id="tab-customize">
+    <div class="container">
+      <div class="page-title">Customize Site 🎨</div>
+      <p class="page-sub">Change your site's title, subtitle, and colors — then copy the updated CSS variables.</p>
+
+      <div class="form-card">
+        <div class="section-label">Site Identity</div>
+        <div class="form-row">
+          <div class="form-group no-margin">
+            <label>Site Name (Part 1)</label>
+            <input type="text" id="c-name1" placeholder="Dorm" value="Dorm"/>
+          </div>
+          <div class="form-group no-margin">
+            <label>Site Name (Part 2 — colored)</label>
+            <input type="text" id="c-name2" placeholder="-Grindz" value="-Grindz"/>
+          </div>
+        </div>
+        <div class="form-group no-margin">
+          <label>Subtitle / Tagline</label>
+          <input type="text" id="c-subtitle" placeholder="Real food. Tiny budgets. No excuses." value="Real food. Tiny budgets. No excuses."/>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="section-label">Colors</div>
+        <div class="customize-grid">
+          <div class="form-group no-margin">
+            <label>Accent (Gold)</label>
+            <div class="color-row">
+              <input type="color" id="c-accent" value="#e8a945"/>
+              <span>Main highlight color</span>
+            </div>
+          </div>
+          <div class="form-group no-margin">
+            <label>Accent 2 (Orange)</label>
+            <div class="color-row">
+              <input type="color" id="c-accent2" value="#d4603a"/>
+              <span>Buttons &amp; tags</span>
+            </div>
+          </div>
+          <div class="form-group no-margin">
+            <label>Background</label>
+            <div class="color-row">
+              <input type="color" id="c-bg" value="#0f0e0c"/>
+              <span>Page background</span>
+            </div>
+          </div>
+          <div class="form-group no-margin">
+            <label>Card Background</label>
+            <div class="color-row">
+              <input type="color" id="c-card" value="#1a1814"/>
+              <span>Recipe cards</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="customize-preview" id="customize-preview">
+          <h3 id="prev-name">Dorm<span id="prev-name2" style="color:#e8a945;">-Grindz</span></h3>
+          <p id="prev-subtitle">Real food. Tiny budgets. No excuses.</p>
+          <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <span id="prev-badge" style="background:#e8a945;color:#000;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;">Preview Badge</span>
+            <span id="prev-badge2" style="background:#d4603a;color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;">🎓 College Kitchen</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="apply-btn" onclick="generateCustomize()">🎨 Generate Updated CSS Code</button>
+
+      <div class="customize-output" id="customize-output">
+        <div class="output-header">
+          <h3>✅ CSS Variables Ready!</h3>
+          <button class="copy-btn" onclick="copyCustomize()">Copy Code</button>
+        </div>
+        <div class="output-code" id="customize-code"></div>
+      </div>
+
+      <div class="instructions" id="customize-instructions" style="display:none;margin-top:16px;">
+        <h4>📋 How to Apply These Changes</h4>
+        <ol>
+          <li>Click <strong>"Copy Code"</strong> above.</li>
+          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong>.</li>
+          <li>Find the <code>:root {</code> block near the top of the file.</li>
+          <li>Replace the entire <code>:root { ... }</code> block with what you copied.</li>
+          <li>Also find the <code>&lt;h1&gt;</code> tag and update the text to match your new name.</li>
+          <li>Click <strong>"Commit changes"</strong> — your new look is live! ✨</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #main-content -->
+
+<div class="toast" id="toast">✅ Copied to clipboard!</div>
+
+<script>
+  const CORRECT_PASSWORD = 'Remembered2017!';
+
+  // ── AUTH ──
+  function checkPassword() {
+    const input = document.getElementById('pw-input');
+    const err = document.getElementById('lock-error');
+    if (input.value === CORRECT_PASSWORD) {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      sessionStorage.setItem('dg_auth', '1');
+      buildRemoveList();
+      setupCustomizeListeners();
+    } else {
+      input.classList.add('error');
+      err.textContent = 'Incorrect password. Try again.';
+      input.value = '';
+      setTimeout(() => input.classList.remove('error'), 500);
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('dg_auth');
+    location.reload();
+  }
+
+  function togglePw() {
+    const inp = document.getElementById('pw-input');
+    const btn = document.getElementById('toggle-pw-btn');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+    else { inp.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  // Auto-unlock if session still active
+  if (sessionStorage.getItem('dg_auth') === '1') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    setTimeout(() => { buildRemoveList(); setupCustomizeListeners(); }, 0);
+  }
+
+  // ── TABS ──
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  // ── ADD RECIPE ──
+  let photoDataUrl = '';
+  let photoFileName = '';
+
+  function addIngredient() {
+    const list = document.getElementById('ingredients-list');
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<input type="text" placeholder="e.g. 1 cup rice"/><button class="remove-row-btn" onclick="removeRow(this)">×</button>`;
+    list.appendChild(row);
+    row.querySelector('input').focus();
+  }
+
+  function addStep() {
+    const list = document.getElementById('steps-list');
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<input type="text" placeholder="Next step..."/><button class="remove-row-btn" onclick="removeRow(this)">×</button>`;
+    list.appendChild(row);
+    row.querySelector('input').focus();
+  }
+
+  function removeRow(btn) {
+    const list = btn.parentElement.parentElement;
+    if (list.children.length > 1) btn.parentElement.remove();
+  }
+
+  function getListValues(id) {
+    return [...document.getElementById(id).querySelectorAll('input')]
+      .map(i => i.value.trim()).filter(Boolean);
+  }
+
+  function handlePhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    photoFileName = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      photoDataUrl = e.target.result;
+      document.getElementById('photo-img').src = photoDataUrl;
+      document.getElementById('photo-preview').style.display = 'block';
+      document.getElementById('photo-name').style.display = 'block';
+      document.getElementById('photo-name').textContent = '📎 ' + photoFileName + ' — upload this file to your GitHub repo in an images/ folder';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto() {
+    photoDataUrl = '';
+    photoFileName = '';
+    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('photo-name').style.display = 'none';
+    document.getElementById('photo-input').value = '';
+  }
+
+  function generate() {
+    const emoji = document.getElementById('emoji').value.trim() || '🍽️';
+    const title = document.getElementById('title').value.trim();
+    const desc = document.getElementById('desc').value.trim();
+    const time = document.getElementById('time').value.trim();
+    const cost = document.getElementById('cost').value.trim();
+    const diff = document.getElementById('diff').value;
+    const tip = document.getElementById('tip').value.trim();
+    const tags = [...document.querySelectorAll('.tag-option:checked')].map(c => `"${c.value}"`);
+    const ingredients = getListValues('ingredients-list');
+    const steps = getListValues('steps-list');
+
+    if (!title || !desc || ingredients.length === 0 || steps.length === 0) {
+      alert('Please fill in at least: Title, Description, Ingredients, and Steps!');
+      return;
+    }
+
+    const ingStr = ingredients.map(i => `      "${i}"`).join(',\n');
+    const stepStr = steps.map(s => `      "${s}"`).join(',\n');
+    const tagStr = tags.length ? tags.join(', ') : '"quick"';
+    const photoLine = photoFileName ? `\n    photo: "images/${photoFileName}",` : '';
+
+    const code = `  {
+    emoji: "${emoji}",
+    title: "${title}",
+    desc: "${desc}",
+    time: "${time}", cost: "${cost}", diff: "${diff}",
+    tags: [${tagStr}],${photoLine}
+    ingredients: [
+${ingStr}
+    ],
+    steps: [
+${stepStr}
+    ],
+    tip: "${tip}"
+  },`;
+
+    document.getElementById('output-code').textContent = code;
+    document.getElementById('output-card').style.display = 'block';
+    document.getElementById('instructions').style.display = 'block';
+    document.getElementById('output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode() {
+    copyToClipboard(document.getElementById('output-code').textContent, document.querySelector('#output-card .copy-btn'));
+  }
+
+  // ── REMOVE RECIPES ──
+  const recipes = [
+    { emoji:"🍳", title:"Mug Scrambled Eggs", desc:"Fluffy eggs in 2 minutes flat.", time:"2 min", cost:"$0.50", diff:"Easy", tags:["quick","cheap","microwave"], ingredients:["2 large eggs","1 tbsp milk","Salt & pepper","Butter or cooking spray","Optional: cheese, salsa"], steps:["Spray or butter a large microwave-safe mug.","Crack in 2 eggs, add milk, salt & pepper. Whisk with a fork.","Microwave on HIGH for 30 seconds. Stir.","Microwave another 30 seconds. Stir again.","Cook 15 more seconds if needed — they should look just barely set.","Top with cheese or salsa and eat straight from the mug!"], tip:"Don't overcook — they keep cooking after you stop the microwave. Slightly wet = perfect." },
+    { emoji:"🍜", title:"Upgraded Instant Ramen", desc:"Turn a 25¢ packet into something actually good.", time:"8 min", cost:"$1.50", diff:"Easy", tags:["quick","cheap"], ingredients:["1 pack instant ramen","1 egg","Soy sauce (1 tsp)","Sesame oil (few drops)","Green onion (optional)","Sriracha"], steps:["Boil water and cook ramen noodles per package — but use only HALF the flavor packet.","While noodles cook, soft-boil or poach an egg separately.","Drain most of the water, leave a little broth.","Add soy sauce, sesame oil, and remaining half of flavor packet.","Top with the egg, green onions, and a squirt of sriracha.","Mix everything up and devour."], tip:"Half the flavor packet = way less sodium. Adding an egg gives you actual protein." },
+    { emoji:"🫓", title:"Avocado Toast (Dorm Style)", desc:"The classic. Takes 5 minutes and feels fancy.", time:"5 min", cost:"$2.00", diff:"Easy", tags:["quick"], ingredients:["2 slices bread","1 ripe avocado","Lemon juice or lime (splash)","Salt & red pepper flakes","Optional: egg on top"], steps:["Toast your bread to golden perfection.","Halve the avocado, remove pit, scoop into a bowl.","Add a squeeze of lemon/lime juice, salt, and pepper flakes.","Mash with a fork — leave it a little chunky.","Spread onto toast and add toppings of your choice."], tip:"If your avocado isn't ripe yet, microwave it for 30 seconds. Works in a pinch!" },
+    { emoji:"🌯", title:"5-Minute Bean Burrito", desc:"Filling, cheap, and endlessly customizable.", time:"5 min", cost:"$1.50", diff:"Easy", tags:["quick","cheap","microwave"], ingredients:["1 large flour tortilla","½ cup canned black beans (drained)","¼ cup shredded cheese","Salsa","Sour cream (optional)"], steps:["Drain and rinse canned black beans.","Spread beans in the center of the tortilla.","Add cheese and a spoonful of salsa.","Fold in sides then roll up tightly.","Microwave seam-side down for 60 seconds.","Top with sour cream and extra salsa."], tip:"Add a tiny bit of cumin and garlic powder to the beans for way more flavor." },
+    { emoji:"🍝", title:"Lazy Mac & Cheese", desc:"Better than the box. Only slightly more effort.", time:"15 min", cost:"$2.50", diff:"Medium", tags:["cheap"], ingredients:["1 cup macaroni pasta","2 tbsp butter","¼ cup milk","½ cup shredded cheddar","Salt & pepper","Optional: hot sauce"], steps:["Boil a pot of salted water. Add pasta, cook 8–9 minutes until tender.","Drain pasta and return to pot over LOW heat.","Add butter and let it melt.","Pour in milk and stir.","Add shredded cheese a handful at a time, stirring until smooth.","Season with salt, pepper, and hot sauce. Serve immediately."], tip:"Low heat is key — high heat makes cheese grainy. Patience = creaminess." },
+    { emoji:"🥗", title:"Tuna Salad Wrap", desc:"High protein, zero cooking. Done in 3 minutes.", time:"3 min", cost:"$2.00", diff:"Easy", tags:["quick","cheap"], ingredients:["1 can tuna (drained)","2 tbsp mayo","Mustard (optional)","Salt & pepper","Lettuce leaves or tortilla","Pickle relish"], steps:["Open and fully drain the tuna can.","Mix tuna with mayo, mustard, salt, pepper, and relish.","Taste and adjust — add more mayo if too dry.","Scoop onto a tortilla or lettuce leaves.","Wrap it up and eat!"], tip:"Add sriracha and a squeeze of lemon to take this from boring to actually good." }
+  ];
+
+  let deletedIndexes = new Set();
+
+  function buildRemoveList() {
+    const list = document.getElementById('recipe-remove-list');
+    list.innerHTML = '';
+    recipes.forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'recipe-remove-card';
+      card.id = 'remove-card-' + i;
+      card.innerHTML = `
+        <div class="recipe-remove-emoji">${r.emoji}</div>
+        <div class="recipe-remove-info">
+          <h3>${r.title}</h3>
+          <p>${r.time} · ${r.cost} · ${r.diff}</p>
+        </div>
+        <button class="delete-btn" onclick="markDeleted(${i})">Remove</button>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  function markDeleted(i) {
+    deletedIndexes.add(i);
+    const card = document.getElementById('remove-card-' + i);
+    card.classList.add('deleted');
+    generateRemoveOutput();
+  }
+
+  function generateRemoveOutput() {
+    const remaining = recipes.filter((_, i) => !deletedIndexes.has(i));
+    const lines = remaining.map(r => {
+      const ing = r.ingredients.map(x => `      "${x}"`).join(',\n');
+      const steps = r.steps.map(x => `      "${x}"`).join(',\n');
+      const tags = r.tags.map(t => `"${t}"`).join(', ');
+      return `  {\n    emoji: "${r.emoji}",\n    title: "${r.title}",\n    desc: "${r.desc}",\n    time: "${r.time}", cost: "${r.cost}", diff: "${r.diff}",\n    tags: [${tags}],\n    ingredients: [\n${ing}\n    ],\n    steps: [\n${steps}\n    ],\n    tip: "${r.tip}"\n  }`;
+    }).join(',\n');
+
+    const code = `const recipes = [\n${lines}\n];`;
+    document.getElementById('remove-output-code').textContent = code;
+    document.getElementById('remove-output-card').style.display = 'block';
+    document.getElementById('remove-instructions').style.display = 'block';
+    document.getElementById('remove-output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyRemoveCode() {
+    copyToClipboard(document.getElementById('remove-output-code').textContent, document.querySelector('#remove-output-card .copy-btn'));
+  }
+
+  // ── CUSTOMIZE ──
+  function setupCustomizeListeners() {
+    const fields = ['c-accent','c-accent2','c-bg','c-card','c-name1','c-name2','c-subtitle'];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', updatePreview);
+    });
+    updatePreview();
+  }
+
+  function updatePreview() {
+    const accent = document.getElementById('c-accent').value;
+    const accent2 = document.getElementById('c-accent2').value;
+    const name1 = document.getElementById('c-name1').value || 'Dorm';
+    const name2 = document.getElementById('c-name2').value || '-Grindz';
+    const subtitle = document.getElementById('c-subtitle').value;
+
+    document.getElementById('prev-name').childNodes[0].textContent = name1;
+    document.getElementById('prev-name2').textContent = name2;
+    document.getElementById('prev-name2').style.color = accent;
+    document.getElementById('prev-subtitle').textContent = subtitle;
+    document.getElementById('prev-badge').style.background = accent;
+    document.getElementById('prev-badge2').style.background = accent2;
+  }
+
+  function generateCustomize() {
+    const accent = document.getElementById('c-accent').value;
+    const accent2 = document.getElementById('c-accent2').value;
+    const bg = document.getElementById('c-bg').value;
+    const card = document.getElementById('c-card').value;
+
+    const code = `:root {
+  --bg: ${bg};
+  --card: ${card};
+  --accent: ${accent};
+  --accent2: ${accent2};
+  --text: #f0ece4;
+  --muted: #8a8070;
+  --border: #2e2b25;
+}`;
+
+    document.getElementById('customize-code').textContent = code;
+    document.getElementById('customize-output').style.display = 'block';
+    document.getElementById('customize-instructions').style.display = 'block';
+    document.getElementById('customize-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCustomize() {
+    copyToClipboard(document.getElementById('customize-code').textContent, document.querySelector('#customize-output .copy-btn'));
+  }
+
+  // ── UTILS ──
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      showToast();
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2500);
+  }
+</script>
+</body>
+</html>
