@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dorm-Grindz 🍜</title>
+  <title>Dorm Eats 🍜</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -25,6 +25,7 @@
       min-height: 100vh;
     }
 
+    /* Noise texture overlay */
     body::before {
       content: '';
       position: fixed;
@@ -62,9 +63,15 @@
       letter-spacing: -2px;
     }
 
-    h1 span { color: var(--accent); }
+    h1 span {
+      color: var(--accent);
+    }
 
-    .subtitle { color: var(--muted); margin-top: 12px; font-size: 15px; }
+    .subtitle {
+      color: var(--muted);
+      margin-top: 12px;
+      font-size: 15px;
+    }
 
     .divider {
       width: 60px;
@@ -74,6 +81,7 @@
       border-radius: 2px;
     }
 
+    /* Filter bar */
     .filters {
       display: flex;
       justify-content: center;
@@ -101,6 +109,7 @@
       font-weight: 600;
     }
 
+    /* Grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -112,8 +121,13 @@
       z-index: 1;
     }
 
-    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; padding: 0 16px 60px; } }
-    @media (max-width: 1024px) and (min-width: 769px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
 
     .card {
       background: var(--card);
@@ -143,8 +157,6 @@
     .card:nth-child(5) { animation-delay: 0.25s; }
     .card:nth-child(6) { animation-delay: 0.3s; }
 
-    .card-img { width: 100%; height: 160px; object-fit: cover; display: block; }
-
     .card-emoji {
       font-size: 60px;
       text-align: center;
@@ -152,8 +164,15 @@
       background: #141210;
     }
 
-    .card-body { padding: 18px 20px 20px; }
-    .card-meta { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .card-body {
+      padding: 18px 20px 20px;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
     .badge {
       font-size: 10px;
@@ -168,9 +187,19 @@
     .badge-cost { background: #1f2a1f; color: #7ec87e; }
     .badge-diff { background: #2a1f1f; color: #e07070; }
 
-    .card h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 6px; }
-    .card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
 
+    .card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Modal */
     .overlay {
       display: none;
       position: fixed;
@@ -183,9 +212,15 @@
       padding: 20px;
     }
 
-    .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+    .overlay.open {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
     .modal {
       background: var(--card);
@@ -203,8 +238,6 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    .modal-hero-img { width: 100%; height: 220px; object-fit: cover; display: none; border-radius: 20px 20px 0 0; }
-
     .modal-header {
       background: #141210;
       padding: 30px;
@@ -214,9 +247,19 @@
 
     .modal-emoji { font-size: 70px; }
 
-    .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-top: 10px; }
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-top: 10px;
+    }
 
-    .modal-badges { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .modal-badges {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
 
     .modal-body { padding: 24px 28px; }
 
@@ -231,7 +274,12 @@
 
     .modal-body h4:first-child { margin-top: 0; }
 
-    .ingredients-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .ingredients-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
     .ingredients-list li {
       display: flex;
@@ -243,22 +291,35 @@
 
     .ingredients-list li::before {
       content: '';
-      width: 6px; height: 6px;
+      width: 6px;
+      height: 6px;
       background: var(--accent);
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .steps-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-    .steps-list li { display: flex; gap: 14px; font-size: 14px; color: #ccc5b8; line-height: 1.5; }
+    .steps-list li {
+      display: flex;
+      gap: 14px;
+      font-size: 14px;
+      color: #ccc5b8;
+      line-height: 1.5;
+    }
 
     .step-num {
       background: var(--accent2);
       color: #fff;
       font-weight: 700;
       font-size: 12px;
-      width: 24px; height: 24px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -297,32 +358,18 @@
 
     footer {
       text-align: center;
-      padding: 24px 20px;
+      padding: 20px;
       color: var(--muted);
       font-size: 12px;
       border-top: 1px solid var(--border);
-      position: relative;
-      z-index: 1;
     }
-
-    .admin-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: #2a2520;
-      font-size: 11px;
-      text-decoration: none;
-      letter-spacing: 1px;
-      transition: color 0.3s;
-    }
-
-    .admin-link:hover { color: var(--accent); }
   </style>
 </head>
 <body>
 
 <header>
   <div class="tag">🎓 College Kitchen</div>
-  <h1>Dorm<span>-Grindz</span></h1>
+  <h1>Dorm<span>Eats</span></h1>
   <p class="subtitle">Real food. Tiny budgets. No excuses.</p>
   <div class="divider"></div>
 </header>
@@ -338,9 +385,8 @@
 
 <!-- Modal -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
-  <div class="modal">
-    <img class="modal-hero-img" id="m-img" src="" alt=""/>
-    <div class="modal-header" id="modal-header">
+  <div class="modal" id="modal">
+    <div class="modal-header">
       <div class="modal-emoji" id="m-emoji"></div>
       <h2 id="m-title"></h2>
       <div class="modal-badges" id="m-badges"></div>
@@ -357,11 +403,7 @@
   </div>
 </div>
 
-<footer>
-  Made with ❤️ and instant ramen — Dorm-Grindz © 2025
-  <br/>
-  <a href="admin.html" class="admin-link">⚙ admin</a>
-</footer>
+<footer>Made with ❤️ and instant ramen — Dorm Eats © 2025</footer>
 
 <script>
 const recipes = [
@@ -475,10 +517,8 @@ function renderCards(filter = 'all') {
     const card = document.createElement('div');
     card.className = 'card';
     card.style.animationDelay = (i * 0.06) + 's';
-    const topHtml = r.photo
-      ? `<img class="card-img" src="${r.photo}" alt="${r.title}" onerror="this.style.display='none'"/>`
-      : `<div class="card-emoji">${r.emoji}</div>`;
-    card.innerHTML = `${topHtml}
+    card.innerHTML = `
+      <div class="card-emoji">${r.emoji}</div>
       <div class="card-body">
         <div class="card-meta">
           <span class="badge badge-time">⏱ ${r.time}</span>
@@ -487,7 +527,8 @@ function renderCards(filter = 'all') {
         </div>
         <h3>${r.title}</h3>
         <p>${r.desc}</p>
-      </div>`;
+      </div>
+    `;
     card.onclick = () => openModal(r);
     grid.appendChild(card);
   });
@@ -500,25 +541,17 @@ function filterCards(tag, btn) {
 }
 
 function openModal(r) {
-  const imgEl = document.getElementById('m-img');
-  const emojiEl = document.getElementById('m-emoji');
-  if (r.photo) {
-    imgEl.src = r.photo;
-    imgEl.style.display = 'block';
-    emojiEl.style.display = 'none';
-  } else {
-    imgEl.style.display = 'none';
-    emojiEl.style.display = 'block';
-    emojiEl.textContent = r.emoji;
-  }
+  document.getElementById('m-emoji').textContent = r.emoji;
   document.getElementById('m-title').textContent = r.title;
   document.getElementById('m-badges').innerHTML = `
     <span class="badge badge-time">⏱ ${r.time}</span>
     <span class="badge badge-cost">💰 ${r.cost}</span>
-    <span class="badge badge-diff">${r.diff}</span>`;
+    <span class="badge badge-diff">${r.diff}</span>
+  `;
   document.getElementById('m-ingredients').innerHTML = r.ingredients.map(i => `<li>${i}</li>`).join('');
   document.getElementById('m-steps').innerHTML = r.steps.map((s, i) => `
-    <li><span class="step-num">${i+1}</span><span>${s}</span></li>`).join('');
+    <li><span class="step-num">${i+1}</span><span>${s}</span></li>
+  `).join('');
   document.getElementById('m-tip').textContent = r.tip;
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
