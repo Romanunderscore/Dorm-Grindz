@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dorm Eats 🍜</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0f0e0c;
+      --card: #1a1814;
+      --accent: #e8a945;
+      --accent2: #d4603a;
+      --text: #f0ece4;
+      --muted: #8a8070;
+      --border: #2e2b25;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      position: relative;
+    }
+
+    .tag {
+      display: inline-block;
+      background: var(--accent2);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 90px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 12px;
+      font-size: 15px;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      margin: 24px auto;
+      border-radius: 2px;
+    }
+
+    /* Filter bar */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 20px 40px;
+    }
+
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 0 40px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border-color: var(--accent);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.2s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.3s; }
+
+    .card-emoji {
+      font-size: 60px;
+      text-align: center;
+      padding: 30px 20px 16px;
+      background: #141210;
+    }
+
+    .card-body {
+      padding: 18px 20px 20px;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+
+    .badge-time { background: #2a2418; color: var(--accent); }
+    .badge-cost { background: #1f2a1f; color: #7ec87e; }
+    .badge-diff { background: #2a1f1f; color: #e07070; }
+
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Modal */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .overlay.open {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-width: 560px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      background: #141210;
+      padding: 30px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-emoji { font-size: 70px; }
+
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-top: 10px;
+    }
+
+    .modal-badges {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-body { padding: 24px 28px; }
+
+    .modal-body h4 {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-body h4:first-child { margin-top: 0; }
+
+    .ingredients-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ingredients-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #ccc5b8;
+    }
+
+    .ingredients-list li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .steps-list li {
+      display: flex;
+      gap: 14px;
+      font-size: 14px;
+      color: #ccc5b8;
+      line-height: 1.5;
+    }
+
+    .step-num {
+      background: var(--accent2);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .tip-box {
+      background: #1e1c16;
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .close-btn {
+      display: block;
+      width: calc(100% - 56px);
+      margin: 20px 28px 28px;
+      padding: 14px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.2s;
+    }
+
+    .close-btn:hover { opacity: 0.85; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">🎓 College Kitchen</div>
+  <h1>Dorm<span>Eats</span></h1>
+  <p class="subtitle">Real food. Tiny budgets. No excuses.</p>
+  <div class="divider"></div>
+</header>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterCards('all', this)">All Recipes</button>
+  <button class="filter-btn" onclick="filterCards('quick', this)">⚡ Under 10 min</button>
+  <button class="filter-btn" onclick="filterCards('cheap', this)">💰 Under $3</button>
+  <button class="filter-btn" onclick="filterCards('microwave', this)">📡 Microwave Only</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-emoji" id="m-emoji"></div>
+      <h2 id="m-title"></h2>
+      <div class="modal-badges" id="m-badges"></div>
+    </div>
+    <div class="modal-body">
+      <h4>Ingredients</h4>
+      <ul class="ingredients-list" id="m-ingredients"></ul>
+      <h4>Steps</h4>
+      <ol class="steps-list" id="m-steps"></ol>
+      <h4>Pro Tip</h4>
+      <div class="tip-box" id="m-tip"></div>
+    </div>
+    <button class="close-btn" onclick="closeModal()">← Back to Recipes</button>
+  </div>
+</div>
+
+<footer>Made with ❤️ and instant ramen — Dorm Eats © 2025</footer>
+
+<script>
+const recipes = [
+  {
+    emoji: "🍳",
+    title: "Mug Scrambled Eggs",
+    desc: "Fluffy eggs in 2 minutes flat. Breakfast sorted.",
+    time: "2 min", cost: "$0.50", diff: "Easy",
+    tags: ["quick", "cheap", "microwave"],
+    ingredients: ["2 large eggs", "1 tbsp milk", "Salt & pepper", "Butter or cooking spray", "Optional: cheese, salsa"],
+    steps: [
+      "Spray or butter a large microwave-safe mug.",
+      "Crack in 2 eggs, add milk, salt & pepper. Whisk with a fork.",
+      "Microwave on HIGH for 30 seconds. Stir.",
+      "Microwave another 30 seconds. Stir again.",
+      "Cook 15 more seconds if needed — they should look just barely set.",
+      "Top with cheese or salsa and eat straight from the mug!"
+    ],
+    tip: "Don't overcook — they keep cooking after you stop the microwave. Slightly wet = perfect."
+  },
+  {
+    emoji: "🍜",
+    title: "Upgraded Instant Ramen",
+    desc: "Turn a 25¢ packet into something actually good.",
+    time: "8 min", cost: "$1.50", diff: "Easy",
+    tags: ["quick", "cheap"],
+    ingredients: ["1 pack instant ramen", "1 egg", "Soy sauce (1 tsp)", "Sesame oil (few drops)", "Green onion (optional)", "Sriracha"],
+    steps: [
+      "Boil water and cook ramen noodles per package — but use only HALF the flavor packet.",
+      "While noodles cook, soft-boil or poach an egg separately.",
+      "Drain most of the water, leave a little broth.",
+      "Add soy sauce, sesame oil, and remaining half of flavor packet.",
+      "Top with the egg, green onions, and a squirt of sriracha.",
+      "Mix everything up and devour."
+    ],
+    tip: "Half the flavor packet = way less sodium. Adding an egg gives you actual protein."
+  },
+  {
+    emoji: "🫓",
+    title: "Avocado Toast (Dorm Style)",
+    desc: "The classic. Takes 5 minutes and feels fancy.",
+    time: "5 min", cost: "$2.00", diff: "Easy",
+    tags: ["quick"],
+    ingredients: ["2 slices bread", "1 ripe avocado", "Lemon juice or lime (splash)", "Salt & red pepper flakes", "Optional: egg on top"],
+    steps: [
+      "Toast your bread to golden perfection.",
+      "Halve the avocado, remove pit, scoop into a bowl.",
+      "Add a squeeze of lemon/lime juice, salt, and pepper flakes.",
+      "Mash with a fork — leave it a little chunky.",
+      "Spread onto toast and add toppings of your choice."
+    ],
+    tip: "If your avocado isn't ripe yet, microwave it for 30 seconds. Works in a pinch!"
+  },
+  {
+    emoji: "🌯",
+    title: "5-Minute Bean Burrito",
+    desc: "Filling, cheap, and endlessly customizable.",
+    time: "5 min", cost: "$1.50", diff: "Easy",
+    tags: ["quick", "cheap", "microwave"],
+    ingredients: ["1 large flour tortilla", "½ cup canned black beans (drained)", "¼ cup shredded cheese", "Salsa", "Sour cream (optional)"],
+    steps: [
+      "Drain and rinse canned black beans.",
+      "Spread beans in the center of the tortilla.",
+      "Add cheese and a spoonful of salsa.",
+      "Fold in sides then roll up tightly.",
+      "Microwave seam-side down for 60 seconds.",
+      "Top with sour cream and extra salsa."
+    ],
+    tip: "Add a tiny bit of cumin and garlic powder to the beans for way more flavor."
+  },
+  {
+    emoji: "🍝",
+    title: "Lazy Mac & Cheese",
+    desc: "Better than the box. Only slightly more effort.",
+    time: "15 min", cost: "$2.50", diff: "Medium",
+    tags: ["cheap"],
+    ingredients: ["1 cup macaroni pasta", "2 tbsp butter", "¼ cup milk", "½ cup shredded cheddar", "Salt & pepper", "Optional: hot sauce"],
+    steps: [
+      "Boil a pot of salted water. Add pasta, cook 8–9 minutes until tender.",
+      "Drain pasta and return to pot over LOW heat.",
+      "Add butter and let it melt.",
+      "Pour in milk and stir.",
+      "Add shredded cheese a handful at a time, stirring until smooth.",
+      "Season with salt, pepper, and hot sauce. Serve immediately."
+    ],
+    tip: "Low heat is key — high heat makes cheese grainy. Patience = creaminess."
+  },
+  {
+    emoji: "🥗",
+    title: "Tuna Salad Wrap",
+    desc: "High protein, zero cooking. Done in 3 minutes.",
+    time: "3 min", cost: "$2.00", diff: "Easy",
+    tags: ["quick", "cheap"],
+    ingredients: ["1 can tuna (drained)", "2 tbsp mayo", "Mustard (optional)", "Salt & pepper", "Lettuce leaves or tortilla", "Pickle relish"],
+    steps: [
+      "Open and fully drain the tuna can.",
+      "Mix tuna with mayo, mustard, salt, pepper, and relish.",
+      "Taste and adjust — add more mayo if too dry.",
+      "Scoop onto a tortilla or lettuce leaves.",
+      "Wrap it up and eat!"
+    ],
+    tip: "Add sriracha and a squeeze of lemon to take this from boring to actually good."
+  }
+];
+
+function renderCards(filter = 'all') {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? recipes : recipes.filter(r => r.tags.includes(filter));
+  filtered.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (i * 0.06) + 's';
+    card.innerHTML = `
+      <div class="card-emoji">${r.emoji}</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="badge badge-time">⏱ ${r.time}</span>
+          <span class="badge badge-cost">💰 ${r.cost}</span>
+          <span class="badge badge-diff">${r.diff}</span>
+        </div>
+        <h3>${r.title}</h3>
+        <p>${r.desc}</p>
+      </div>
+    `;
+    card.onclick = () => openModal(r);
+    grid.appendChild(card);
+  });
+}
+
+function filterCards(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(tag);
+}
+
+function openModal(r) {
+  document.getElementById('m-emoji').textContent = r.emoji;
+  document.getElementById('m-title').textContent = r.title;
+  document.getElementById('m-badges').innerHTML = `
+    <span class="badge badge-time">⏱ ${r.time}</span>
+    <span class="badge badge-cost">💰 ${r.cost}</span>
+    <span class="badge badge-diff">${r.diff}</span>
+  `;
+  document.getElementById('m-ingredients').innerHTML = r.ingredients.map(i => `<li>${i}</li>`).join('');
+  document.getElementById('m-steps').innerHTML = r.steps.map((s, i) => `
+    <li><span class="step-num">${i+1}</span><span>${s}</span></li>
+  `).join('');
+  document.getElementById('m-tip').textContent = r.tip;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('overlay')) return;
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+renderCards();
+</script>
+</body>
+</html>
