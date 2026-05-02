@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dorm-Grindz 🍜</title>
+  <title>Dorm-Grindz ð</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -321,7 +321,7 @@
 <body>
 
 <header>
-  <div class="tag">🎓 College Kitchen</div>
+  <div class="tag">ð College Kitchen</div>
   <h1>Dorm<span>-Grindz</span></h1>
   <p class="subtitle">Real food. Tiny budgets. No excuses.</p>
   <div class="divider"></div>
@@ -329,9 +329,9 @@
 
 <div class="filters">
   <button class="filter-btn active" onclick="filterCards('all', this)">All Recipes</button>
-  <button class="filter-btn" onclick="filterCards('quick', this)">⚡ Under 10 min</button>
-  <button class="filter-btn" onclick="filterCards('cheap', this)">💰 Under $3</button>
-  <button class="filter-btn" onclick="filterCards('microwave', this)">📡 Microwave Only</button>
+  <button class="filter-btn" onclick="filterCards('quick', this)">â¡ Under 10 min</button>
+  <button class="filter-btn" onclick="filterCards('cheap', this)">ð° Under $3</button>
+  <button class="filter-btn" onclick="filterCards('microwave', this)">ð¡ Microwave Only</button>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -353,20 +353,35 @@
       <h4>Pro Tip</h4>
       <div class="tip-box" id="m-tip"></div>
     </div>
-    <button class="close-btn" onclick="closeModal()">← Back to Recipes</button>
+    <button class="close-btn" onclick="closeModal()">â Back to Recipes</button>
   </div>
 </div>
 
 <footer>
-  Made with ❤️ and instant ramen — Dorm-Grindz © 2025
+  Made with â¤ï¸ and instant ramen â Dorm-Grindz Â© 2025
   <br/>
-  <a href="admin.html" class="admin-link">⚙ admin</a>
+  <a href="admin.html" class="admin-link">â admin</a>
 </footer>
 
 <script>
 const recipes = [
   {
-    emoji: "🍳",
+    emoji: "🍽️",
+    title: "asdfa",
+    desc: "asdfasdf",
+    time: "asdfas", cost: "sadfa", diff: "Easy",
+    tags: ["microwave"],
+    ingredients: [
+      "asdf"
+    ],
+    steps: [
+      "sadf"
+    ],
+    tip: "asdfasdfa"
+  },
+
+  {
+    emoji: "ð³",
     title: "Mug Scrambled Eggs",
     desc: "Fluffy eggs in 2 minutes flat. Breakfast sorted.",
     time: "2 min", cost: "$0.50", diff: "Easy",
@@ -377,20 +392,20 @@ const recipes = [
       "Crack in 2 eggs, add milk, salt & pepper. Whisk with a fork.",
       "Microwave on HIGH for 30 seconds. Stir.",
       "Microwave another 30 seconds. Stir again.",
-      "Cook 15 more seconds if needed — they should look just barely set.",
+      "Cook 15 more seconds if needed â they should look just barely set.",
       "Top with cheese or salsa and eat straight from the mug!"
     ],
-    tip: "Don't overcook — they keep cooking after you stop the microwave. Slightly wet = perfect."
+    tip: "Don't overcook â they keep cooking after you stop the microwave. Slightly wet = perfect."
   },
   {
-    emoji: "🍜",
+    emoji: "ð",
     title: "Upgraded Instant Ramen",
-    desc: "Turn a 25¢ packet into something actually good.",
+    desc: "Turn a 25Â¢ packet into something actually good.",
     time: "8 min", cost: "$1.50", diff: "Easy",
     tags: ["quick", "cheap"],
     ingredients: ["1 pack instant ramen", "1 egg", "Soy sauce (1 tsp)", "Sesame oil (few drops)", "Green onion (optional)", "Sriracha"],
     steps: [
-      "Boil water and cook ramen noodles per package — but use only HALF the flavor packet.",
+      "Boil water and cook ramen noodles per package â but use only HALF the flavor packet.",
       "While noodles cook, soft-boil or poach an egg separately.",
       "Drain most of the water, leave a little broth.",
       "Add soy sauce, sesame oil, and remaining half of flavor packet.",
@@ -400,7 +415,7 @@ const recipes = [
     tip: "Half the flavor packet = way less sodium. Adding an egg gives you actual protein."
   },
   {
-    emoji: "🫓",
+    emoji: "ð«",
     title: "Avocado Toast (Dorm Style)",
     desc: "The classic. Takes 5 minutes and feels fancy.",
     time: "5 min", cost: "$2.00", diff: "Easy",
@@ -410,18 +425,18 @@ const recipes = [
       "Toast your bread to golden perfection.",
       "Halve the avocado, remove pit, scoop into a bowl.",
       "Add a squeeze of lemon/lime juice, salt, and pepper flakes.",
-      "Mash with a fork — leave it a little chunky.",
+      "Mash with a fork â leave it a little chunky.",
       "Spread onto toast and add toppings of your choice."
     ],
     tip: "If your avocado isn't ripe yet, microwave it for 30 seconds. Works in a pinch!"
   },
   {
-    emoji: "🌯",
+    emoji: "ð¯",
     title: "5-Minute Bean Burrito",
     desc: "Filling, cheap, and endlessly customizable.",
     time: "5 min", cost: "$1.50", diff: "Easy",
     tags: ["quick", "cheap", "microwave"],
-    ingredients: ["1 large flour tortilla", "½ cup canned black beans (drained)", "¼ cup shredded cheese", "Salsa", "Sour cream (optional)"],
+    ingredients: ["1 large flour tortilla", "Â½ cup canned black beans (drained)", "Â¼ cup shredded cheese", "Salsa", "Sour cream (optional)"],
     steps: [
       "Drain and rinse canned black beans.",
       "Spread beans in the center of the tortilla.",
@@ -433,24 +448,24 @@ const recipes = [
     tip: "Add a tiny bit of cumin and garlic powder to the beans for way more flavor."
   },
   {
-    emoji: "🍝",
+    emoji: "ð",
     title: "Lazy Mac & Cheese",
     desc: "Better than the box. Only slightly more effort.",
     time: "15 min", cost: "$2.50", diff: "Medium",
     tags: ["cheap"],
-    ingredients: ["1 cup macaroni pasta", "2 tbsp butter", "¼ cup milk", "½ cup shredded cheddar", "Salt & pepper", "Optional: hot sauce"],
+    ingredients: ["1 cup macaroni pasta", "2 tbsp butter", "Â¼ cup milk", "Â½ cup shredded cheddar", "Salt & pepper", "Optional: hot sauce"],
     steps: [
-      "Boil a pot of salted water. Add pasta, cook 8–9 minutes until tender.",
+      "Boil a pot of salted water. Add pasta, cook 8â9 minutes until tender.",
       "Drain pasta and return to pot over LOW heat.",
       "Add butter and let it melt.",
       "Pour in milk and stir.",
       "Add shredded cheese a handful at a time, stirring until smooth.",
       "Season with salt, pepper, and hot sauce. Serve immediately."
     ],
-    tip: "Low heat is key — high heat makes cheese grainy. Patience = creaminess."
+    tip: "Low heat is key â high heat makes cheese grainy. Patience = creaminess."
   },
   {
-    emoji: "🥗",
+    emoji: "ð¥",
     title: "Tuna Salad Wrap",
     desc: "High protein, zero cooking. Done in 3 minutes.",
     time: "3 min", cost: "$2.00", diff: "Easy",
@@ -459,7 +474,7 @@ const recipes = [
     steps: [
       "Open and fully drain the tuna can.",
       "Mix tuna with mayo, mustard, salt, pepper, and relish.",
-      "Taste and adjust — add more mayo if too dry.",
+      "Taste and adjust â add more mayo if too dry.",
       "Scoop onto a tortilla or lettuce leaves.",
       "Wrap it up and eat!"
     ],
@@ -481,8 +496,8 @@ function renderCards(filter = 'all') {
     card.innerHTML = `${topHtml}
       <div class="card-body">
         <div class="card-meta">
-          <span class="badge badge-time">⏱ ${r.time}</span>
-          <span class="badge badge-cost">💰 ${r.cost}</span>
+          <span class="badge badge-time">â± ${r.time}</span>
+          <span class="badge badge-cost">ð° ${r.cost}</span>
           <span class="badge badge-diff">${r.diff}</span>
         </div>
         <h3>${r.title}</h3>
@@ -513,8 +528,8 @@ function openModal(r) {
   }
   document.getElementById('m-title').textContent = r.title;
   document.getElementById('m-badges').innerHTML = `
-    <span class="badge badge-time">⏱ ${r.time}</span>
-    <span class="badge badge-cost">💰 ${r.cost}</span>
+    <span class="badge badge-time">â± ${r.time}</span>
+    <span class="badge badge-cost">ð° ${r.cost}</span>
     <span class="badge badge-diff">${r.diff}</span>`;
   document.getElementById('m-ingredients').innerHTML = r.ingredients.map(i => `<li>${i}</li>`).join('');
   document.getElementById('m-steps').innerHTML = r.steps.map((s, i) => `
