@@ -7,591 +7,175 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0f0e0c;
-      --card: #1a1814;
-      --accent: #e8a945;
-      --accent2: #d4603a;
-      --text: #f0ece4;
-      --muted: #8a8070;
-      --border: #2e2b25;
-      --input-bg: #111009;
-      --success: #4caf7d;
-      --danger: #e07070;
+      --bg: #0f0e0c; --card: #1a1814; --accent: #e8a945; --accent2: #d4603a;
+      --text: #f0ece4; --muted: #8a8070; --border: #2e2b25;
+      --input-bg: #111009; --success: #4caf7d; --danger: #e07070;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-    }
-
-    /* ── PASSWORD LOCK ── */
-    #lock-screen {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .lock-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 48px 40px;
-      max-width: 380px;
-      width: 90%;
-      text-align: center;
-    }
-
-    .lock-icon { font-size: 48px; margin-bottom: 16px; }
-
-    .lock-box h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      margin-bottom: 6px;
-    }
-
-    .lock-box p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
-
-    .lock-input-wrap { position: relative; margin-bottom: 12px; }
-
-    .lock-input-wrap input {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      padding: 13px 48px 13px 16px;
-      width: 100%;
-      outline: none;
-      transition: border-color 0.2s;
-      letter-spacing: 2px;
-    }
-
-    .lock-input-wrap input:focus { border-color: var(--accent); }
-    .lock-input-wrap input.error { border-color: var(--danger); animation: shake 0.3s ease; }
-
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      25% { transform: translateX(-6px); }
-      75% { transform: translateX(6px); }
-    }
-
-    .toggle-pw {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 16px;
-      padding: 0;
-    }
-
-    .lock-error {
-      color: var(--danger);
-      font-size: 12px;
-      margin-bottom: 12px;
-      min-height: 16px;
-    }
-
-    .lock-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(to right, var(--accent), var(--accent2));
-      color: #000;
-      font-weight: 700;
-      font-size: 15px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: opacity 0.2s;
-    }
-
-    .lock-btn:hover { opacity: 0.88; }
-
-    /* ── MAIN LAYOUT ── */
-    #main-content { display: none; padding-bottom: 80px; }
-
-    header {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 18px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .logo { font-family: 'Playfair Display', serif; font-size: 22px; }
-    .logo span { color: var(--accent); }
-
-    .header-right { display: flex; align-items: center; gap: 12px; }
-
-    .admin-badge {
-      background: var(--accent2);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 20px;
-    }
-
-    .back-link, .logout-btn {
-      color: var(--muted);
-      font-size: 13px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .back-link:hover, .logout-btn:hover { color: var(--accent); }
-
-    /* ── TABS ── */
-    .tabs {
-      display: flex;
-      gap: 4px;
-      padding: 20px 40px 0;
-      border-bottom: 1px solid var(--border);
-      background: var(--card);
-    }
-
-    .tab-btn {
-      padding: 12px 20px;
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      margin-bottom: -1px;
-    }
-
-    .tab-btn:hover { color: var(--text); }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ── CONTAINER ── */
-    .container { max-width: 780px; margin: 36px auto; padding: 0 24px; }
-
-    .page-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 4px; }
-    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
-
-    /* ── FORM CARDS ── */
-    .form-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-
-    .section-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    .form-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
-
-    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-    .form-group.no-margin { margin-bottom: 0; }
-
-    label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    input, textarea, select {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      padding: 10px 14px;
-      width: 100%;
-      transition: border-color 0.2s;
-      outline: none;
-    }
-
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    input::placeholder, textarea::placeholder { color: #3a342a; }
-    textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-
-    .emoji-input { font-size: 22px; text-align: center; }
-
-    /* Dynamic list */
-    .dynamic-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-    .list-row { display: flex; gap: 8px; align-items: center; }
-    .list-row input { flex: 1; }
-
-    .remove-row-btn {
-      background: #2a1a1a;
-      border: 1px solid #3a2020;
-      color: var(--danger);
-      border-radius: 8px;
-      width: 32px; height: 32px;
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.2s;
-      padding: 0;
-    }
-
-    .remove-row-btn:hover { background: #3a1a1a; }
-
-    .add-item-btn {
-      background: transparent;
-      border: 1px dashed var(--border);
-      color: var(--muted);
-      border-radius: 10px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.2s;
-    }
-
-    .add-item-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* Tags */
-    .tags-group { display: flex; flex-wrap: wrap; gap: 10px; }
-    .tag-option { display: none; }
-
-    .tag-label {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 7px 16px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-    }
-
-    .tag-option:checked + .tag-label {
-      background: var(--accent);
-      color: #000;
-      border-color: var(--accent);
-      font-weight: 600;
-    }
-
-    /* Photo upload */
-    .photo-drop {
-      border: 2px dashed var(--border);
-      border-radius: 14px;
-      padding: 28px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      background: var(--input-bg);
-    }
-
-    .photo-drop:hover { border-color: var(--accent); background: #1a1508; }
-
-    .photo-drop input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-      border: none;
-      padding: 0;
-    }
-
-    .photo-drop-icon { font-size: 32px; margin-bottom: 8px; }
-    .photo-drop p { color: var(--muted); font-size: 13px; }
-    .photo-drop span { color: var(--accent); font-weight: 600; }
-
-    .photo-preview { display: none; margin-top: 14px; position: relative; }
-
-    .photo-preview img {
-      width: 100%;
-      max-height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
-
-    .photo-remove-btn {
-      position: absolute;
-      top: 8px; right: 8px;
-      background: rgba(0,0,0,0.75);
-      border: 1px solid var(--border);
-      color: var(--danger);
-      border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    .photo-name {
-      margin-top: 8px;
-      font-size: 12px;
-      color: var(--muted);
-      background: var(--input-bg);
-      border-radius: 8px;
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-    }
-
-    /* Buttons */
-    .generate-btn {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(to right, var(--accent), var(--accent2));
-      color: #000;
-      font-weight: 700;
-      font-size: 15px;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: opacity 0.2s, transform 0.1s;
-      margin-top: 6px;
-    }
-
-    .generate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-    /* Output */
-    .output-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      display: none;
-      margin-top: 20px;
-      animation: fadeUp 0.4s ease;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .output-header {
-      background: #141210;
-      border-bottom: 1px solid var(--border);
-      padding: 14px 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .output-header h3 { font-size: 14px; color: var(--success); }
-
-    .copy-btn {
-      background: var(--success);
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      padding: 6px 14px;
-      font-size: 13px;
-      font-weight: 700;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-    }
-
-    .output-code {
-      padding: 20px 22px;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      line-height: 1.7;
-      color: #c8bfaf;
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 320px;
-      overflow-y: auto;
-    }
-
-    .instructions {
-      background: #141f14;
-      border: 1px solid #2a3a2a;
-      border-radius: 14px;
-      padding: 18px 22px;
-      margin-top: 18px;
-      display: none;
-    }
-
-    .instructions h4 { color: var(--success); font-size: 12px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-    .instructions ol { padding-left: 16px; display: flex; flex-direction: column; gap: 7px; }
-    .instructions li { font-size: 13px; color: #9aaa9a; line-height: 1.5; }
-    .instructions code { background: #0f180f; border: 1px solid #2a3a2a; border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--success); }
-
-    /* ── REMOVE RECIPES TAB ── */
-    .recipe-remove-list { display: flex; flex-direction: column; gap: 12px; }
-
-    .recipe-remove-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .recipe-remove-emoji { font-size: 32px; flex-shrink: 0; }
-
-    .recipe-remove-info { flex: 1; }
-    .recipe-remove-info h3 { font-size: 16px; font-family: 'Playfair Display', serif; margin-bottom: 2px; }
-    .recipe-remove-info p { font-size: 12px; color: var(--muted); }
-
-    .delete-btn {
-      background: #2a1414;
-      border: 1px solid #4a2020;
-      color: var(--danger);
-      border-radius: 10px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-
-    .delete-btn:hover { background: #3a1414; border-color: var(--danger); }
-
-    .deleted { opacity: 0.3; pointer-events: none; text-decoration: line-through; }
-
-    .remove-note {
-      background: #1a1510;
-      border: 1px solid #3a2a14;
-      border-left: 3px solid var(--accent);
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    /* ── CUSTOMIZE TAB ── */
-    .customize-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    .color-row { display: flex; align-items: center; gap: 12px; }
-    .color-row input[type="color"] {
-      width: 44px;
-      height: 44px;
-      padding: 2px;
-      border-radius: 10px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .color-row span { font-size: 13px; color: var(--muted); }
-
-    .customize-preview {
-      background: #141210;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .customize-preview h3 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 6px; }
-    .customize-preview p { font-size: 13px; color: var(--muted); }
-
-    .apply-btn {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(to right, var(--accent), var(--accent2));
-      color: #000;
-      font-weight: 700;
-      font-size: 14px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      margin-top: 16px;
-      transition: opacity 0.2s;
-    }
-
-    .apply-btn:hover { opacity: 0.88; }
-
-    .customize-output {
-      display: none;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      margin-top: 16px;
-      overflow: hidden;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--success);
-      color: #000;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 12px 20px;
-      border-radius: 12px;
-      z-index: 999;
-      display: none;
-      animation: fadeUp 0.3s ease;
-    }
-
-    @media (max-width: 600px) {
-      .form-row, .form-row.thirds, .customize-grid { grid-template-columns: 1fr; }
-      header { padding: 14px 16px; }
-      .tabs { padding: 16px 16px 0; }
-      .form-card { padding: 18px; }
-      .container { padding: 0 14px; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+    /* LOCK */
+    #lock-screen { position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; }
+    .lock-box { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:48px 40px; max-width:380px; width:90%; text-align:center; }
+    .lock-icon { font-size:48px; margin-bottom:16px; }
+    .lock-box h2 { font-family:'Playfair Display',serif; font-size:28px; margin-bottom:6px; }
+    .lock-box p { color:var(--muted); font-size:14px; margin-bottom:28px; }
+    .lock-input-wrap { position:relative; margin-bottom:12px; }
+    .lock-input-wrap input { background:var(--input-bg); border:1px solid var(--border); border-radius:12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; padding:13px 48px 13px 16px; width:100%; outline:none; transition:border-color .2s; letter-spacing:2px; }
+    .lock-input-wrap input:focus { border-color:var(--accent); }
+    .lock-input-wrap input.error { border-color:var(--danger); animation:shake .3s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    .toggle-pw { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); cursor:pointer; font-size:16px; padding:0; }
+    .lock-error { color:var(--danger); font-size:12px; margin-bottom:12px; min-height:16px; }
+    .lock-btn { width:100%; padding:14px; background:linear-gradient(to right,var(--accent),var(--accent2)); color:#000; font-weight:700; font-size:15px; border:none; border-radius:12px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:opacity .2s; }
+    .lock-btn:hover { opacity:.88; }
+
+    /* MAIN */
+    #main-content { display:none; padding-bottom:80px; }
+    header { background:var(--card); border-bottom:1px solid var(--border); padding:18px 40px; display:flex; align-items:center; justify-content:space-between; gap:20px; position:sticky; top:0; z-index:50; }
+    .logo { font-family:'Playfair Display',serif; font-size:22px; }
+    .logo span { color:var(--accent); }
+    .header-right { display:flex; align-items:center; gap:12px; }
+    .admin-badge { background:var(--accent2); color:#fff; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:4px 10px; border-radius:20px; }
+    .back-link, .logout-btn { color:var(--muted); font-size:13px; cursor:pointer; background:none; border:none; font-family:'DM Sans',sans-serif; text-decoration:none; transition:color .2s; }
+    .back-link:hover, .logout-btn:hover { color:var(--accent); }
+
+    /* TABS */
+    .tabs { display:flex; gap:4px; padding:20px 40px 0; border-bottom:1px solid var(--border); background:var(--card); }
+    .tab-btn { padding:12px 20px; background:none; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; border-bottom:2px solid transparent; transition:all .2s; margin-bottom:-1px; }
+    .tab-btn:hover { color:var(--text); }
+    .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* CONTAINER & FORMS */
+    .container { max-width:780px; margin:36px auto; padding:0 24px; }
+    .page-title { font-family:'Playfair Display',serif; font-size:32px; margin-bottom:4px; }
+    .page-sub { color:var(--muted); font-size:14px; margin-bottom:32px; }
+    .form-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:28px; margin-bottom:20px; }
+    .section-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+    .form-row.thirds { grid-template-columns:1fr 1fr 1fr; }
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .form-group.no-margin { margin-bottom:0; }
+    label { font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; }
+    input, textarea, select { background:var(--input-bg); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; padding:10px 14px; width:100%; transition:border-color .2s; outline:none; }
+    input:focus, textarea:focus, select:focus { border-color:var(--accent); }
+    input::placeholder, textarea::placeholder { color:#3a342a; }
+    textarea { resize:vertical; min-height:80px; line-height:1.5; }
+    .emoji-input { font-size:22px; text-align:center; }
+
+    /* DYNAMIC LIST */
+    .dynamic-list { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+    .list-row { display:flex; gap:8px; align-items:center; }
+    .list-row input { flex:1; }
+    .remove-row-btn { background:#2a1a1a; border:1px solid #3a2020; color:var(--danger); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s; padding:0; }
+    .remove-row-btn:hover { background:#3a1a1a; }
+    .add-item-btn { background:transparent; border:1px dashed var(--border); color:var(--muted); border-radius:10px; padding:8px 16px; font-size:13px; font-family:'DM Sans',sans-serif; cursor:pointer; width:100%; transition:all .2s; }
+    .add-item-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* TAGS */
+    .tags-group { display:flex; flex-wrap:wrap; gap:10px; }
+    .tag-option { display:none; }
+    .tag-label { background:var(--input-bg); border:1px solid var(--border); border-radius:20px; padding:7px 16px; font-size:13px; cursor:pointer; transition:all .2s; user-select:none; }
+    .tag-option:checked + .tag-label { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+
+    /* PHOTO */
+    .photo-drop { border:2px dashed var(--border); border-radius:14px; padding:28px 20px; text-align:center; cursor:pointer; transition:all .2s; position:relative; background:var(--input-bg); }
+    .photo-drop:hover { border-color:var(--accent); background:#1a1508; }
+    .photo-drop input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; border:none; padding:0; }
+    .photo-drop-icon { font-size:32px; margin-bottom:8px; }
+    .photo-drop p { color:var(--muted); font-size:13px; }
+    .photo-drop span { color:var(--accent); font-weight:600; }
+    .photo-preview { display:none; margin-top:14px; position:relative; }
+    .photo-preview img { width:100%; max-height:200px; object-fit:cover; border-radius:10px; border:1px solid var(--border); }
+    .photo-remove-btn { position:absolute; top:8px; right:8px; background:rgba(0,0,0,.75); border:1px solid var(--border); color:var(--danger); border-radius:8px; padding:4px 10px; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+    .photo-name { margin-top:8px; font-size:12px; color:var(--muted); background:var(--input-bg); border-radius:8px; padding:6px 12px; border:1px solid var(--border); }
+
+    /* GITHUB SETTINGS CARD */
+    .github-card { background:var(--card); border:1px solid var(--accent); border-radius:20px; padding:28px; margin-bottom:28px; }
+    .github-status { display:flex; align-items:center; gap:8px; font-size:13px; margin-top:10px; }
+    .status-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+    .status-dot.connected { background:var(--success); }
+    .status-dot.error { background:var(--danger); }
+    .token-row { display:flex; gap:8px; }
+    .token-row input { flex:1; font-family:monospace; font-size:12px; letter-spacing:.5px; }
+    .save-token-btn { background:var(--accent); color:#000; border:none; border-radius:10px; padding:0 18px; font-size:13px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; white-space:nowrap; transition:opacity .2s; }
+    .save-token-btn:hover { opacity:.85; }
+    .github-help { margin-top:14px; background:#1a1510; border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:10px 14px; font-size:12px; color:var(--muted); line-height:1.7; }
+    .github-help a { color:var(--accent); }
+    .github-help code { background:#111009; border:1px solid var(--border); border-radius:4px; padding:1px 6px; font-size:11px; color:var(--accent); }
+
+    /* BUTTONS */
+    .btn-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+    .generate-btn { padding:15px; background:linear-gradient(to right,var(--accent),var(--accent2)); color:#000; font-weight:700; font-size:15px; border:none; border-radius:14px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:opacity .2s,transform .1s; }
+    .generate-btn:hover { opacity:.9; transform:translateY(-1px); }
+    .publish-btn { padding:15px; background:#1a2e1a; border:1.5px solid var(--success); color:var(--success); font-weight:700; font-size:15px; border-radius:14px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .2s; }
+    .publish-btn:hover { background:#223022; }
+    .publish-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .publish-btn.publishing { animation:pulse 1s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+    /* OUTPUT */
+    .output-card { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:none; margin-top:20px; animation:fadeUp .4s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .output-header { background:#141210; border-bottom:1px solid var(--border); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; }
+    .output-header h3 { font-size:14px; color:var(--success); }
+    .copy-btn { background:var(--success); color:#000; border:none; border-radius:8px; padding:6px 14px; font-size:13px; font-weight:700; font-family:'DM Sans',sans-serif; cursor:pointer; }
+    .output-code { padding:20px 22px; font-family:'Courier New',monospace; font-size:12px; line-height:1.7; color:#c8bfaf; white-space:pre-wrap; word-break:break-word; max-height:320px; overflow-y:auto; }
+    .instructions { background:#141f14; border:1px solid #2a3a2a; border-radius:14px; padding:18px 22px; margin-top:18px; display:none; }
+    .instructions h4 { color:var(--success); font-size:12px; font-weight:700; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
+    .instructions ol { padding-left:16px; display:flex; flex-direction:column; gap:7px; }
+    .instructions li { font-size:13px; color:#9aaa9a; line-height:1.5; }
+    .instructions code { background:#0f180f; border:1px solid #2a3a2a; border-radius:4px; padding:1px 6px; font-size:11px; color:var(--success); }
+
+    /* PUBLISH RESULT */
+    .publish-result { display:none; border-radius:14px; padding:18px 22px; margin-top:16px; font-size:14px; line-height:1.6; }
+    .publish-result.success { background:#0d1f0d; border:1px solid #2a4a2a; color:#9FE1CB; }
+    .publish-result.fail { background:#1f0d0d; border:1px solid #4a2a2a; color:#F0997B; }
+
+    /* REMOVE TAB */
+    .recipe-remove-list { display:flex; flex-direction:column; gap:12px; }
+    .recipe-remove-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; display:flex; align-items:center; gap:16px; transition:opacity .3s; }
+    .recipe-remove-card.deleted { opacity:.3; }
+    .recipe-remove-emoji { font-size:32px; flex-shrink:0; }
+    .recipe-remove-info { flex:1; }
+    .recipe-remove-info h3 { font-size:16px; font-family:'Playfair Display',serif; margin-bottom:2px; }
+    .recipe-remove-info p { font-size:12px; color:var(--muted); }
+    .delete-btn { background:#2a1414; border:1px solid #4a2020; color:var(--danger); border-radius:10px; padding:8px 16px; font-size:13px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .2s; flex-shrink:0; }
+    .delete-btn:hover { background:#3a1414; border-color:var(--danger); }
+    .remove-note { background:#1a1510; border:1px solid #3a2a14; border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:14px 18px; font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6; }
+
+    /* CUSTOMIZE TAB */
+    .customize-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .color-row { display:flex; align-items:center; gap:12px; }
+    .color-row input[type="color"] { width:44px; height:44px; padding:2px; border-radius:10px; cursor:pointer; flex-shrink:0; }
+    .color-row span { font-size:13px; color:var(--muted); }
+    .customize-preview { background:#141210; border:1px solid var(--border); border-radius:14px; padding:20px; margin-top:20px; text-align:center; }
+    .customize-preview h3 { font-family:'Playfair Display',serif; font-size:24px; margin-bottom:6px; }
+    .customize-preview p { font-size:13px; color:var(--muted); }
+    .apply-btn { width:100%; padding:13px; background:linear-gradient(to right,var(--accent),var(--accent2)); color:#000; font-weight:700; font-size:14px; border:none; border-radius:12px; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top:16px; transition:opacity .2s; }
+    .apply-btn:hover { opacity:.88; }
+    .customize-output { display:none; background:var(--card); border:1px solid var(--border); border-radius:14px; margin-top:16px; overflow:hidden; }
+
+    /* TOAST */
+    .toast { position:fixed; bottom:24px; right:24px; font-weight:700; font-size:13px; padding:12px 20px; border-radius:12px; z-index:999; display:none; animation:fadeUp .3s ease; }
+    .toast.success { background:var(--success); color:#000; }
+    .toast.error { background:var(--danger); color:#000; }
+
+    @media (max-width:600px) {
+      .form-row,.form-row.thirds,.customize-grid,.btn-row { grid-template-columns:1fr; }
+      header { padding:14px 16px; }
+      .tabs { padding:16px 16px 0; overflow-x:auto; }
+      .form-card,.github-card { padding:18px; }
+      .container { padding:0 14px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── PASSWORD LOCK ── -->
+<!-- LOCK -->
 <div id="lock-screen">
   <div class="lock-box">
     <div class="lock-icon">🔒</div>
@@ -606,9 +190,8 @@
   </div>
 </div>
 
-<!-- ── MAIN CONTENT ── -->
+<!-- MAIN -->
 <div id="main-content">
-
   <header>
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="logo">Dorm<span>-Grindz</span></div>
@@ -621,17 +204,50 @@
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('add', this)">➕ Add Recipe</button>
-    <button class="tab-btn" onclick="switchTab('remove', this)">🗑 Remove Recipe</button>
-    <button class="tab-btn" onclick="switchTab('customize', this)">🎨 Customize Site</button>
+    <button class="tab-btn active" onclick="switchTab('add',this)">➕ Add Recipe</button>
+    <button class="tab-btn" onclick="switchTab('remove',this)">🗑 Remove Recipe</button>
+    <button class="tab-btn" onclick="switchTab('customize',this)">🎨 Customize Site</button>
   </div>
 
-  <!-- ════ TAB: ADD RECIPE ════ -->
+  <!-- ══ ADD RECIPE TAB ══ -->
   <div class="tab-panel active" id="tab-add">
     <div class="container">
       <div class="page-title">Add a Recipe 🍴</div>
-      <p class="page-sub">Fill out the form — it generates ready-to-paste code for your site.</p>
+      <p class="page-sub">Fill out the form and publish directly to your live site — no GitHub needed.</p>
 
+      <!-- GITHUB SETTINGS -->
+      <div class="github-card">
+        <div class="section-label">⚡ GitHub Connection</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Paste your GitHub token once and you can publish recipes directly from this page — no copy-pasting ever again.</p>
+        <div class="token-row">
+          <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
+          <button class="save-token-btn" onclick="saveToken()">Save Token</button>
+        </div>
+        <div class="form-row" style="margin-top:12px;margin-bottom:0;">
+          <div class="form-group no-margin">
+            <label>GitHub Username</label>
+            <input type="text" id="gh-user" placeholder="e.g. Romanunderscore"/>
+          </div>
+          <div class="form-group no-margin">
+            <label>Repository Name</label>
+            <input type="text" id="gh-repo" placeholder="e.g. Dorm-Grindz"/>
+          </div>
+        </div>
+        <div class="github-status" id="gh-status">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-text">Enter your token and repo details above, then click Save Token.</span>
+        </div>
+        <div class="github-help">
+          <strong style="color:var(--accent);">How to get your token:</strong><br/>
+          1. Go to <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a><br/>
+          2. Give it a name like <code>dorm-grindz-admin</code><br/>
+          3. Set expiration to <code>No expiration</code><br/>
+          4. Check the <code>repo</code> scope (full control of repos)<br/>
+          5. Click <strong>Generate token</strong> — copy it and paste it above
+        </div>
+      </div>
+
+      <!-- RECIPE FORM -->
       <div class="form-card">
         <div class="section-label">Basic Info</div>
         <div class="form-row">
@@ -660,9 +276,7 @@
           <div class="form-group no-margin">
             <label>Difficulty</label>
             <select id="diff">
-              <option>Easy</option>
-              <option>Medium</option>
-              <option>Hard</option>
+              <option>Easy</option><option>Medium</option><option>Hard</option>
             </select>
           </div>
         </div>
@@ -682,11 +296,11 @@
 
       <div class="form-card">
         <div class="section-label">Photo</div>
-        <div class="photo-drop" id="photo-drop">
+        <div class="photo-drop">
           <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
           <div class="photo-drop-icon">📸</div>
           <p>Drag & drop a photo, or <span>click to browse</span></p>
-          <p style="font-size:11px;margin-top:4px;color:#4a4035;">JPG, PNG, WEBP supported</p>
+          <p style="font-size:11px;margin-top:4px;color:#4a4035;">JPG, PNG, WEBP supported — will be uploaded to your repo automatically</p>
         </div>
         <div class="photo-preview" id="photo-preview">
           <img id="photo-img" src="" alt="Preview"/>
@@ -725,121 +339,113 @@
         </div>
       </div>
 
-      <button class="generate-btn" onclick="generate()">✨ Generate Recipe Code</button>
+      <!-- ACTION BUTTONS -->
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateCode()">📋 Generate Code Only</button>
+        <button class="publish-btn" id="publish-btn" onclick="publishToGitHub()">🚀 Publish Directly to Site</button>
+      </div>
 
+      <!-- PUBLISH RESULT -->
+      <div class="publish-result" id="publish-result"></div>
+
+      <!-- FALLBACK CODE OUTPUT -->
       <div class="output-card" id="output-card">
         <div class="output-header">
-          <h3>✅ Recipe Code Ready!</h3>
+          <h3>📋 Recipe Code — paste this into GitHub</h3>
           <button class="copy-btn" onclick="copyCode()">Copy Code</button>
         </div>
         <div class="output-code" id="output-code"></div>
       </div>
-
       <div class="instructions" id="instructions">
-        <h4>📋 How to Add This to Your Site</h4>
+        <h4>📋 How to Manually Add This</h4>
         <ol>
           <li>Click <strong>"Copy Code"</strong> above.</li>
-          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong> to edit.</li>
-          <li>Find the line: <code>const recipes = [</code></li>
-          <li>Paste your copied code right after the opening <code>[</code> bracket.</li>
-          <li>If you added a photo, also upload that image file to your GitHub repo in an <code>images/</code> folder and update the <code>photo:</code> field to match, e.g. <code>"images/pizza.jpg"</code>.</li>
-          <li>Click <strong>"Commit changes"</strong> — your recipe is live in ~60 seconds! 🎉</li>
+          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong>.</li>
+          <li>Find <code>const recipes = [</code> and paste your code right after the <code>[</code>.</li>
+          <li>Click <strong>"Commit changes"</strong> — live in ~60 seconds! 🎉</li>
         </ol>
       </div>
     </div>
   </div>
 
-  <!-- ════ TAB: REMOVE RECIPE ════ -->
+  <!-- ══ REMOVE RECIPE TAB ══ -->
   <div class="tab-panel" id="tab-remove">
     <div class="container">
       <div class="page-title">Remove a Recipe 🗑</div>
-      <p class="page-sub">Click "Remove" next to any recipe to generate the updated code without it.</p>
-
+      <p class="page-sub">Click Remove next to any recipe. Then publish directly or copy the updated code.</p>
       <div class="remove-note">
-        ⚠️ This tool shows you which recipes to delete from your <code>index.html</code> file. It generates the updated recipe list for you to copy and paste — your live site won't change until you commit it on GitHub.
+        Click <strong>Remove</strong> on any recipes you want to delete. When you're done, hit <strong>Publish Changes</strong> to update your live site instantly, or copy the code to paste manually.
       </div>
-
       <div class="recipe-remove-list" id="recipe-remove-list"></div>
-
+      <div style="margin-top:20px;display:none;" id="remove-actions">
+        <div class="btn-row">
+          <button class="generate-btn" onclick="showRemoveCode()">📋 Generate Code</button>
+          <button class="publish-btn" id="remove-publish-btn" onclick="publishRemovedToGitHub()">🚀 Publish Changes</button>
+        </div>
+      </div>
+      <div class="publish-result" id="remove-publish-result"></div>
       <div class="output-card" id="remove-output-card" style="margin-top:20px;">
         <div class="output-header">
-          <h3>✅ Updated Recipe List Ready!</h3>
+          <h3>✅ Updated Recipe List</h3>
           <button class="copy-btn" onclick="copyRemoveCode()">Copy Code</button>
         </div>
         <div class="output-code" id="remove-output-code"></div>
       </div>
-
       <div class="instructions" id="remove-instructions" style="display:none;margin-top:16px;">
-        <h4>📋 How to Apply This</h4>
+        <h4>📋 How to Apply Manually</h4>
         <ol>
-          <li>Click <strong>"Copy Code"</strong> above.</li>
-          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong>.</li>
-          <li>Find <code>const recipes = [</code> and select everything from that line all the way to the closing <code>];</code>.</li>
-          <li>Replace it with your copied code.</li>
-          <li>Click <strong>"Commit changes"</strong> — done! 🎉</li>
+          <li>Copy the code above.</li>
+          <li>Go to GitHub → <code>index.html</code> → pencil ✏️ to edit.</li>
+          <li>Find <code>const recipes = [</code> and replace everything up to the closing <code>];</code>.</li>
+          <li>Commit changes — done! 🎉</li>
         </ol>
       </div>
     </div>
   </div>
 
-  <!-- ════ TAB: CUSTOMIZE ════ -->
+  <!-- ══ CUSTOMIZE TAB ══ -->
   <div class="tab-panel" id="tab-customize">
     <div class="container">
       <div class="page-title">Customize Site 🎨</div>
-      <p class="page-sub">Change your site's title, subtitle, and colors — then copy the updated CSS variables.</p>
-
+      <p class="page-sub">Change colors and branding, then publish directly or copy the CSS to paste manually.</p>
       <div class="form-card">
         <div class="section-label">Site Identity</div>
         <div class="form-row">
           <div class="form-group no-margin">
             <label>Site Name (Part 1)</label>
-            <input type="text" id="c-name1" placeholder="Dorm" value="Dorm"/>
+            <input type="text" id="c-name1" value="Dorm"/>
           </div>
           <div class="form-group no-margin">
             <label>Site Name (Part 2 — colored)</label>
-            <input type="text" id="c-name2" placeholder="-Grindz" value="-Grindz"/>
+            <input type="text" id="c-name2" value="-Grindz"/>
           </div>
         </div>
         <div class="form-group no-margin">
           <label>Subtitle / Tagline</label>
-          <input type="text" id="c-subtitle" placeholder="Real food. Tiny budgets. No excuses." value="Real food. Tiny budgets. No excuses."/>
+          <input type="text" id="c-subtitle" value="Real food. Tiny budgets. No excuses."/>
         </div>
       </div>
-
       <div class="form-card">
         <div class="section-label">Colors</div>
         <div class="customize-grid">
           <div class="form-group no-margin">
             <label>Accent (Gold)</label>
-            <div class="color-row">
-              <input type="color" id="c-accent" value="#e8a945"/>
-              <span>Main highlight color</span>
-            </div>
+            <div class="color-row"><input type="color" id="c-accent" value="#e8a945"/><span>Main highlight</span></div>
           </div>
           <div class="form-group no-margin">
             <label>Accent 2 (Orange)</label>
-            <div class="color-row">
-              <input type="color" id="c-accent2" value="#d4603a"/>
-              <span>Buttons &amp; tags</span>
-            </div>
+            <div class="color-row"><input type="color" id="c-accent2" value="#d4603a"/><span>Buttons &amp; tags</span></div>
           </div>
           <div class="form-group no-margin">
             <label>Background</label>
-            <div class="color-row">
-              <input type="color" id="c-bg" value="#0f0e0c"/>
-              <span>Page background</span>
-            </div>
+            <div class="color-row"><input type="color" id="c-bg" value="#0f0e0c"/><span>Page background</span></div>
           </div>
           <div class="form-group no-margin">
             <label>Card Background</label>
-            <div class="color-row">
-              <input type="color" id="c-card" value="#1a1814"/>
-              <span>Recipe cards</span>
-            </div>
+            <div class="color-row"><input type="color" id="c-card" value="#1a1814"/><span>Recipe cards</span></div>
           </div>
         </div>
-
-        <div class="customize-preview" id="customize-preview">
+        <div class="customize-preview">
           <h3 id="prev-name">Dorm<span id="prev-name2" style="color:#e8a945;">-Grindz</span></h3>
           <p id="prev-subtitle">Real food. Tiny budgets. No excuses.</p>
           <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
@@ -848,9 +454,11 @@
           </div>
         </div>
       </div>
-
-      <button class="apply-btn" onclick="generateCustomize()">🎨 Generate Updated CSS Code</button>
-
+      <div class="btn-row">
+        <button class="apply-btn" onclick="generateCustomize()" style="margin-top:0;">📋 Generate CSS Code</button>
+        <button class="publish-btn" id="customize-publish-btn" onclick="publishCustomizeToGitHub()" style="margin-top:0;">🚀 Publish Style Changes</button>
+      </div>
+      <div class="publish-result" id="customize-publish-result"></div>
       <div class="customize-output" id="customize-output">
         <div class="output-header">
           <h3>✅ CSS Variables Ready!</h3>
@@ -858,27 +466,27 @@
         </div>
         <div class="output-code" id="customize-code"></div>
       </div>
-
       <div class="instructions" id="customize-instructions" style="display:none;margin-top:16px;">
-        <h4>📋 How to Apply These Changes</h4>
+        <h4>📋 How to Apply Manually</h4>
         <ol>
-          <li>Click <strong>"Copy Code"</strong> above.</li>
-          <li>Go to your GitHub repo → click <code>index.html</code> → click the <strong>pencil ✏️</strong>.</li>
-          <li>Find the <code>:root {</code> block near the top of the file.</li>
-          <li>Replace the entire <code>:root { ... }</code> block with what you copied.</li>
-          <li>Also find the <code>&lt;h1&gt;</code> tag and update the text to match your new name.</li>
-          <li>Click <strong>"Commit changes"</strong> — your new look is live! ✨</li>
+          <li>Copy the code above.</li>
+          <li>Go to GitHub → <code>index.html</code> → pencil ✏️ to edit.</li>
+          <li>Find the <code>:root {</code> block and replace it with what you copied.</li>
+          <li>Also update the <code>&lt;h1&gt;</code> tag to match your new name.</li>
+          <li>Commit — your new look is live! ✨</li>
         </ol>
       </div>
     </div>
   </div>
+</div>
 
-</div><!-- end #main-content -->
-
-<div class="toast" id="toast">✅ Copied to clipboard!</div>
+<div class="toast" id="toast"></div>
 
 <script>
   const CORRECT_PASSWORD = 'Remembered2017!';
+  let ghToken = '', ghUser = '', ghRepo = '';
+  let photoDataUrl = '', photoFileName = '', photoBase64 = '';
+  let deletedIndexes = new Set();
 
   // ── AUTH ──
   function checkPassword() {
@@ -887,7 +495,8 @@
     if (input.value === CORRECT_PASSWORD) {
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('main-content').style.display = 'block';
-      sessionStorage.setItem('dg_auth', '1');
+      sessionStorage.setItem('dg_auth','1');
+      loadSavedGitHub();
       buildRemoveList();
       setupCustomizeListeners();
     } else {
@@ -898,37 +507,119 @@
     }
   }
 
-  function logout() {
-    sessionStorage.removeItem('dg_auth');
-    location.reload();
-  }
+  function logout() { sessionStorage.clear(); localStorage.removeItem('dg_gh'); location.reload(); }
 
   function togglePw() {
     const inp = document.getElementById('pw-input');
     const btn = document.getElementById('toggle-pw-btn');
-    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-    else { inp.type = 'password'; btn.textContent = '👁'; }
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? '👁' : '🙈';
   }
 
-  // Auto-unlock if session still active
   if (sessionStorage.getItem('dg_auth') === '1') {
     document.getElementById('lock-screen').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
-    setTimeout(() => { buildRemoveList(); setupCustomizeListeners(); }, 0);
+    setTimeout(() => { loadSavedGitHub(); buildRemoveList(); setupCustomizeListeners(); }, 0);
   }
 
-  // ── TABS ──
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
+  // ── GITHUB TOKEN ──
+  function loadSavedGitHub() {
+    const saved = localStorage.getItem('dg_gh');
+    if (saved) {
+      try {
+        const d = JSON.parse(saved);
+        ghToken = d.token || '';
+        ghUser = d.user || '';
+        ghRepo = d.repo || '';
+        if (ghToken) document.getElementById('gh-token').value = ghToken;
+        if (ghUser) document.getElementById('gh-user').value = ghUser;
+        if (ghRepo) document.getElementById('gh-repo').value = ghRepo;
+        if (ghToken && ghUser && ghRepo) verifyToken();
+      } catch(e) {}
+    }
   }
 
-  // ── ADD RECIPE ──
-  let photoDataUrl = '';
-  let photoFileName = '';
+  function saveToken() {
+    ghToken = document.getElementById('gh-token').value.trim();
+    ghUser = document.getElementById('gh-user').value.trim();
+    ghRepo = document.getElementById('gh-repo').value.trim();
+    if (!ghToken || !ghUser || !ghRepo) {
+      setStatus('error', 'Please fill in token, username, and repo name.');
+      return;
+    }
+    localStorage.setItem('dg_gh', JSON.stringify({ token: ghToken, user: ghUser, repo: ghRepo }));
+    verifyToken();
+  }
 
+  async function verifyToken() {
+    setStatus('', 'Verifying connection...');
+    try {
+      const res = await fetch(`https://api.github.com/repos/${ghUser}/${ghRepo}/contents/index.html`, {
+        headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (res.ok) {
+        setStatus('connected', `✅ Connected to ${ghUser}/${ghRepo} — ready to publish!`);
+      } else if (res.status === 401) {
+        setStatus('error', '❌ Invalid token — check that it has repo access.');
+      } else if (res.status === 404) {
+        setStatus('error', `❌ Repo "${ghUser}/${ghRepo}" not found — check the spelling.`);
+      } else {
+        setStatus('error', `❌ Error ${res.status} — check your details.`);
+      }
+    } catch(e) {
+      setStatus('error', '❌ Network error — check your internet connection.');
+    }
+  }
+
+  function setStatus(type, msg) {
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    dot.className = 'status-dot' + (type ? ' ' + type : '');
+    txt.textContent = msg;
+  }
+
+  // ── GITHUB API HELPERS ──
+  async function getFileSha(path) {
+    const res = await fetch(`https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${path}`, {
+      headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) return null;
+    const d = await res.json();
+    return d.sha;
+  }
+
+  async function getFileContent(path) {
+    const res = await fetch(`https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${path}`, {
+      headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) return null;
+    const d = await res.json();
+    return { content: atob(d.content.replace(/\n/g,'')), sha: d.sha };
+  }
+
+  async function putFile(path, content, message, sha) {
+    const body = { message, content: btoa(unescape(encodeURIComponent(content))) };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    return res;
+  }
+
+  async function putBinaryFile(path, base64Content, message, sha) {
+    const body = { message, content: base64Content };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    return res;
+  }
+
+  // ── FORM HELPERS ──
   function addIngredient() {
     const list = document.getElementById('ingredients-list');
     const row = document.createElement('div');
@@ -953,8 +644,7 @@
   }
 
   function getListValues(id) {
-    return [...document.getElementById(id).querySelectorAll('input')]
-      .map(i => i.value.trim()).filter(Boolean);
+    return [...document.getElementById(id).querySelectorAll('input')].map(i => i.value.trim()).filter(Boolean);
   }
 
   function handlePhoto(input) {
@@ -964,23 +654,23 @@
     const reader = new FileReader();
     reader.onload = e => {
       photoDataUrl = e.target.result;
+      photoBase64 = photoDataUrl.split(',')[1];
       document.getElementById('photo-img').src = photoDataUrl;
       document.getElementById('photo-preview').style.display = 'block';
       document.getElementById('photo-name').style.display = 'block';
-      document.getElementById('photo-name').textContent = '📎 ' + photoFileName + ' — upload this file to your GitHub repo in an images/ folder';
+      document.getElementById('photo-name').textContent = '📎 ' + photoFileName + ' — will be uploaded to images/ in your repo automatically when you publish';
     };
     reader.readAsDataURL(file);
   }
 
   function removePhoto() {
-    photoDataUrl = '';
-    photoFileName = '';
+    photoDataUrl = ''; photoFileName = ''; photoBase64 = '';
     document.getElementById('photo-preview').style.display = 'none';
     document.getElementById('photo-name').style.display = 'none';
     document.getElementById('photo-input').value = '';
   }
 
-  function generate() {
+  function buildRecipeBlock() {
     const emoji = document.getElementById('emoji').value.trim() || '🍽️';
     const title = document.getElementById('title').value.trim();
     const desc = document.getElementById('desc').value.trim();
@@ -991,40 +681,87 @@
     const tags = [...document.querySelectorAll('.tag-option:checked')].map(c => `"${c.value}"`);
     const ingredients = getListValues('ingredients-list');
     const steps = getListValues('steps-list');
-
-    if (!title || !desc || ingredients.length === 0 || steps.length === 0) {
-      alert('Please fill in at least: Title, Description, Ingredients, and Steps!');
-      return;
-    }
-
+    if (!title || !desc || ingredients.length === 0 || steps.length === 0) return null;
     const ingStr = ingredients.map(i => `      "${i}"`).join(',\n');
     const stepStr = steps.map(s => `      "${s}"`).join(',\n');
     const tagStr = tags.length ? tags.join(', ') : '"quick"';
     const photoLine = photoFileName ? `\n    photo: "images/${photoFileName}",` : '';
+    return { emoji, title, block: `  {\n    emoji: "${emoji}",\n    title: "${title}",\n    desc: "${desc}",\n    time: "${time}", cost: "${cost}", diff: "${diff}",\n    tags: [${tagStr}],${photoLine}\n    ingredients: [\n${ingStr}\n    ],\n    steps: [\n${stepStr}\n    ],\n    tip: "${tip}"\n  },` };
+  }
 
-    const code = `  {
-    emoji: "${emoji}",
-    title: "${title}",
-    desc: "${desc}",
-    time: "${time}", cost: "${cost}", diff: "${diff}",
-    tags: [${tagStr}],${photoLine}
-    ingredients: [
-${ingStr}
-    ],
-    steps: [
-${stepStr}
-    ],
-    tip: "${tip}"
-  },`;
-
-    document.getElementById('output-code').textContent = code;
+  function generateCode() {
+    const r = buildRecipeBlock();
+    if (!r) { alert('Please fill in Title, Description, Ingredients, and Steps!'); return; }
+    document.getElementById('output-code').textContent = r.block;
     document.getElementById('output-card').style.display = 'block';
     document.getElementById('instructions').style.display = 'block';
-    document.getElementById('output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('output-card').scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function copyCode() {
     copyToClipboard(document.getElementById('output-code').textContent, document.querySelector('#output-card .copy-btn'));
+  }
+
+  // ── PUBLISH RECIPE ──
+  async function publishToGitHub() {
+    if (!ghToken || !ghUser || !ghRepo) {
+      showPublishResult('add', false, 'Please save your GitHub token and repo details first (at the top of this page).');
+      return;
+    }
+    const r = buildRecipeBlock();
+    if (!r) { alert('Please fill in Title, Description, Ingredients, and Steps!'); return; }
+
+    const btn = document.getElementById('publish-btn');
+    btn.classList.add('publishing');
+    btn.textContent = '⏳ Publishing...';
+    btn.disabled = true;
+
+    try {
+      // 1. Upload photo if present
+      if (photoBase64 && photoFileName) {
+        showPublishResult('add', null, '📸 Uploading photo...');
+        const imgPath = `images/${photoFileName}`;
+        const existingSha = await getFileSha(imgPath);
+        const imgRes = await putBinaryFile(imgPath, photoBase64, `Add recipe photo: ${photoFileName}`, existingSha);
+        if (!imgRes.ok) throw new Error('Photo upload failed');
+      }
+
+      // 2. Fetch current index.html
+      showPublishResult('add', null, '📥 Fetching your site...');
+      const file = await getFileContent('index.html');
+      if (!file) throw new Error('Could not fetch index.html from your repo');
+
+      // 3. Inject new recipe
+      const marker = 'const recipes = [';
+      const idx = file.content.indexOf(marker);
+      if (idx === -1) throw new Error('Could not find "const recipes = [" in your index.html');
+      const newContent = file.content.slice(0, idx + marker.length) + '\n' + r.block + '\n' + file.content.slice(idx + marker.length);
+
+      // 4. Push updated file
+      showPublishResult('add', null, '🚀 Publishing to GitHub...');
+      const pushRes = await putFile('index.html', newContent, `Add recipe: ${r.title}`, file.sha);
+      if (!pushRes.ok) throw new Error('Failed to push update to GitHub');
+
+      showPublishResult('add', true, `🎉 "${r.title}" is live! Your site will update in about 60 seconds.\n\nhttps://${ghUser}.github.io/${ghRepo}/`);
+      showToast('✅ Recipe published!', 'success');
+
+    } catch(e) {
+      showPublishResult('add', false, '❌ ' + e.message);
+      showToast('❌ Publish failed', 'error');
+    }
+
+    btn.classList.remove('publishing');
+    btn.textContent = '🚀 Publish Directly to Site';
+    btn.disabled = false;
+  }
+
+  function showPublishResult(tab, success, msg) {
+    const idMap = { add:'publish-result', remove:'remove-publish-result', customize:'customize-publish-result' };
+    const el = document.getElementById(idMap[tab]);
+    el.style.display = 'block';
+    el.className = 'publish-result ' + (success === true ? 'success' : success === false ? 'fail' : '');
+    el.style.whiteSpace = 'pre-wrap';
+    el.textContent = msg;
   }
 
   // ── REMOVE RECIPES ──
@@ -1037,8 +774,6 @@ ${stepStr}
     { emoji:"🥗", title:"Tuna Salad Wrap", desc:"High protein, zero cooking. Done in 3 minutes.", time:"3 min", cost:"$2.00", diff:"Easy", tags:["quick","cheap"], ingredients:["1 can tuna (drained)","2 tbsp mayo","Mustard (optional)","Salt & pepper","Lettuce leaves or tortilla","Pickle relish"], steps:["Open and fully drain the tuna can.","Mix tuna with mayo, mustard, salt, pepper, and relish.","Taste and adjust — add more mayo if too dry.","Scoop onto a tortilla or lettuce leaves.","Wrap it up and eat!"], tip:"Add sriracha and a squeeze of lemon to take this from boring to actually good." }
   ];
 
-  let deletedIndexes = new Set();
-
   function buildRemoveList() {
     const list = document.getElementById('recipe-remove-list');
     list.innerHTML = '';
@@ -1046,26 +781,18 @@ ${stepStr}
       const card = document.createElement('div');
       card.className = 'recipe-remove-card';
       card.id = 'remove-card-' + i;
-      card.innerHTML = `
-        <div class="recipe-remove-emoji">${r.emoji}</div>
-        <div class="recipe-remove-info">
-          <h3>${r.title}</h3>
-          <p>${r.time} · ${r.cost} · ${r.diff}</p>
-        </div>
-        <button class="delete-btn" onclick="markDeleted(${i})">Remove</button>
-      `;
+      card.innerHTML = `<div class="recipe-remove-emoji">${r.emoji}</div><div class="recipe-remove-info"><h3>${r.title}</h3><p>${r.time} · ${r.cost} · ${r.diff}</p></div><button class="delete-btn" onclick="markDeleted(${i})">Remove</button>`;
       list.appendChild(card);
     });
   }
 
   function markDeleted(i) {
     deletedIndexes.add(i);
-    const card = document.getElementById('remove-card-' + i);
-    card.classList.add('deleted');
-    generateRemoveOutput();
+    document.getElementById('remove-card-' + i).classList.add('deleted');
+    document.getElementById('remove-actions').style.display = 'block';
   }
 
-  function generateRemoveOutput() {
+  function buildRemainingRecipesCode() {
     const remaining = recipes.filter((_, i) => !deletedIndexes.has(i));
     const lines = remaining.map(r => {
       const ing = r.ingredients.map(x => `      "${x}"`).join(',\n');
@@ -1073,22 +800,52 @@ ${stepStr}
       const tags = r.tags.map(t => `"${t}"`).join(', ');
       return `  {\n    emoji: "${r.emoji}",\n    title: "${r.title}",\n    desc: "${r.desc}",\n    time: "${r.time}", cost: "${r.cost}", diff: "${r.diff}",\n    tags: [${tags}],\n    ingredients: [\n${ing}\n    ],\n    steps: [\n${steps}\n    ],\n    tip: "${r.tip}"\n  }`;
     }).join(',\n');
+    return `const recipes = [\n${lines}\n];`;
+  }
 
-    const code = `const recipes = [\n${lines}\n];`;
+  function showRemoveCode() {
+    const code = buildRemainingRecipesCode();
     document.getElementById('remove-output-code').textContent = code;
     document.getElementById('remove-output-card').style.display = 'block';
     document.getElementById('remove-instructions').style.display = 'block';
-    document.getElementById('remove-output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('remove-output-card').scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function copyRemoveCode() {
     copyToClipboard(document.getElementById('remove-output-code').textContent, document.querySelector('#remove-output-card .copy-btn'));
   }
 
+  async function publishRemovedToGitHub() {
+    if (!ghToken || !ghUser || !ghRepo) {
+      showPublishResult('remove', false, 'Please save your GitHub token on the Add Recipe tab first.');
+      return;
+    }
+    const btn = document.getElementById('remove-publish-btn');
+    btn.classList.add('publishing'); btn.textContent = '⏳ Publishing...'; btn.disabled = true;
+    try {
+      showPublishResult('remove', null, '📥 Fetching your site...');
+      const file = await getFileContent('index.html');
+      if (!file) throw new Error('Could not fetch index.html');
+      const newCode = buildRemainingRecipesCode();
+      const start = file.content.indexOf('const recipes = [');
+      const end = file.content.indexOf('];', start) + 2;
+      if (start === -1) throw new Error('Could not find recipes array in index.html');
+      const newContent = file.content.slice(0, start) + newCode + file.content.slice(end);
+      showPublishResult('remove', null, '🚀 Publishing to GitHub...');
+      const pushRes = await putFile('index.html', newContent, 'Remove recipes via admin panel', file.sha);
+      if (!pushRes.ok) throw new Error('Failed to push update');
+      showPublishResult('remove', true, '🎉 Changes are live! Site updates in ~60 seconds.\n\nhttps://' + ghUser + '.github.io/' + ghRepo + '/');
+      showToast('✅ Changes published!', 'success');
+    } catch(e) {
+      showPublishResult('remove', false, '❌ ' + e.message);
+      showToast('❌ Publish failed', 'error');
+    }
+    btn.classList.remove('publishing'); btn.textContent = '🚀 Publish Changes'; btn.disabled = false;
+  }
+
   // ── CUSTOMIZE ──
   function setupCustomizeListeners() {
-    const fields = ['c-accent','c-accent2','c-bg','c-card','c-name1','c-name2','c-subtitle'];
-    fields.forEach(id => {
+    ['c-accent','c-accent2','c-bg','c-card','c-name1','c-name2','c-subtitle'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', updatePreview);
     });
@@ -1101,7 +858,6 @@ ${stepStr}
     const name1 = document.getElementById('c-name1').value || 'Dorm';
     const name2 = document.getElementById('c-name2').value || '-Grindz';
     const subtitle = document.getElementById('c-subtitle').value;
-
     document.getElementById('prev-name').childNodes[0].textContent = name1;
     document.getElementById('prev-name2').textContent = name2;
     document.getElementById('prev-name2').style.color = accent;
@@ -1110,30 +866,66 @@ ${stepStr}
     document.getElementById('prev-badge2').style.background = accent2;
   }
 
-  function generateCustomize() {
+  function buildCSSCode() {
     const accent = document.getElementById('c-accent').value;
     const accent2 = document.getElementById('c-accent2').value;
     const bg = document.getElementById('c-bg').value;
     const card = document.getElementById('c-card').value;
+    return `:root {\n  --bg: ${bg};\n  --card: ${card};\n  --accent: ${accent};\n  --accent2: ${accent2};\n  --text: #f0ece4;\n  --muted: #8a8070;\n  --border: #2e2b25;\n}`;
+  }
 
-    const code = `:root {
-  --bg: ${bg};
-  --card: ${card};
-  --accent: ${accent};
-  --accent2: ${accent2};
-  --text: #f0ece4;
-  --muted: #8a8070;
-  --border: #2e2b25;
-}`;
-
-    document.getElementById('customize-code').textContent = code;
+  function generateCustomize() {
+    document.getElementById('customize-code').textContent = buildCSSCode();
     document.getElementById('customize-output').style.display = 'block';
     document.getElementById('customize-instructions').style.display = 'block';
-    document.getElementById('customize-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('customize-output').scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function copyCustomize() {
     copyToClipboard(document.getElementById('customize-code').textContent, document.querySelector('#customize-output .copy-btn'));
+  }
+
+  async function publishCustomizeToGitHub() {
+    if (!ghToken || !ghUser || !ghRepo) {
+      showPublishResult('customize', false, 'Please save your GitHub token on the Add Recipe tab first.');
+      return;
+    }
+    const btn = document.getElementById('customize-publish-btn');
+    btn.classList.add('publishing'); btn.textContent = '⏳ Publishing...'; btn.disabled = true;
+    try {
+      showPublishResult('customize', null, '📥 Fetching your site...');
+      const file = await getFileContent('index.html');
+      if (!file) throw new Error('Could not fetch index.html');
+      const newCSS = buildCSSCode();
+      const startMarker = ':root {';
+      const endMarker = '}';
+      const start = file.content.indexOf(startMarker);
+      const end = file.content.indexOf(endMarker, start) + 1;
+      if (start === -1) throw new Error('Could not find :root block in index.html');
+      const name1 = document.getElementById('c-name1').value || 'Dorm';
+      const name2 = document.getElementById('c-name2').value || '-Grindz';
+      const subtitle = document.getElementById('c-subtitle').value;
+      let newContent = file.content.slice(0, start) + newCSS + file.content.slice(end);
+      newContent = newContent.replace(/<h1>([^<]*)<span>([^<]*)<\/span><\/h1>/, `<h1>${name1}<span>${name2}</span></h1>`);
+      newContent = newContent.replace(/<p class="subtitle">([^<]*)<\/p>/, `<p class="subtitle">${subtitle}</p>`);
+      showPublishResult('customize', null, '🚀 Publishing to GitHub...');
+      const pushRes = await putFile('index.html', newContent, 'Update site styling via admin panel', file.sha);
+      if (!pushRes.ok) throw new Error('Failed to push update');
+      showPublishResult('customize', true, '🎉 Style changes are live! Site updates in ~60 seconds.\n\nhttps://' + ghUser + '.github.io/' + ghRepo + '/');
+      showToast('✅ Style published!', 'success');
+    } catch(e) {
+      showPublishResult('customize', false, '❌ ' + e.message);
+      showToast('❌ Publish failed', 'error');
+    }
+    btn.classList.remove('publishing'); btn.textContent = '🚀 Publish Style Changes'; btn.disabled = false;
+  }
+
+  // ── TABS ──
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
   }
 
   // ── UTILS ──
@@ -1141,15 +933,17 @@ ${stepStr}
     navigator.clipboard.writeText(text).then(() => {
       const orig = btn.textContent;
       btn.textContent = '✅ Copied!';
-      showToast();
+      showToast('✅ Copied to clipboard!', 'success');
       setTimeout(() => btn.textContent = orig, 2000);
     });
   }
 
-  function showToast() {
+  function showToast(msg, type) {
     const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
     t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 2500);
+    setTimeout(() => t.style.display = 'none', 3000);
   }
 </script>
 </body>
